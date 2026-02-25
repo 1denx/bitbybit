@@ -36,6 +36,21 @@ export interface Goal {
   updated_at: string;
 }
 
+export interface Task {
+  id: string;
+  user_id: string;
+  goal_id: string;
+  cycle_id: string;
+  title: string;
+  category: TaskCategory;
+  priority: Priority;
+  scheduled_weeks: number[];
+  frequency: Frequency;
+  note: string | null;
+  create_at: string;
+  updated_at: string;
+}
+
 export interface TaskInstance {
   id: string;
   user_id: string;
