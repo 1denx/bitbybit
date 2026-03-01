@@ -6,21 +6,21 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
 
-  console.log("callback hit, code:", code);
+  // console.log("callback hit, code:", code);
 
   if (code) {
     try {
       const supabase = await createClient();
       const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
-      console.log("exchange result:", { data, error });
+      // console.log("exchange result:", { data, error });
 
       if (!error) {
         return NextResponse.redirect(`${origin}/dashboard`);
       }
       return NextResponse.redirect(`${origin}/auth?error=callback_error`);
     } catch (error) {
-      console.error("callback error:", error);
+      // console.error("callback error:", error);
       return NextResponse.redirect(`${origin}/auth?error=sever_error`);
     }
   }
