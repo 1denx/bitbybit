@@ -37,7 +37,7 @@ export default function CyclesPage() {
           <h1 className="text-xl font-semibold text-zinc-900">週期管理</h1>
         </div>
         <Button onClick={() => setModalOpen(true)} className="flex items-center">
-          <Plus size={14} className="mr-1.5" />
+          <Plus size={14} className="mr-1" />
           新增週期
         </Button>
       </div>
@@ -58,7 +58,7 @@ export default function CyclesPage() {
             <h3 className="font-semibold text-zinc-700 mb-1">還沒有任何週期</h3>
             <p className="text-sm text-zinc-400 mb-6">建立一個 12 週計畫，開始執行目標</p>
             <Button onClick={() => setModalOpen(true)}>
-              <Plus size={14} className="mr-1.5" />
+              <Plus size={14} className="mr-1" />
               建立週期
             </Button>
           </div>

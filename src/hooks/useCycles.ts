@@ -62,7 +62,6 @@ export function useCycles() {
   const createCycle = async (input: CreateCycleInput): Promise<boolean> => {
     if (!user) return false;
     try {
-      const supabase = createClient();
       const endDate = calcEndDate(new Date(input.start_date));
 
       const payload = {
@@ -74,7 +73,7 @@ export function useCycles() {
         status: "planning",
       };
 
-      console.log("insert payload:", payload);
+      // console.log("insert payload:", payload);
 
       const { data, error } = await supabase.from("cycles").insert(payload).select().single();
 

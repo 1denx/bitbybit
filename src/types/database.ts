@@ -3,7 +3,7 @@
 export type CycleStatus = "planning" | "active" | "completed";
 export type GoalPriority = "main" | "sub";
 export type TaskCategory = "core" | "extra";
-export type Priority = "urgent_important" | "important" | "urgent" | "normal";
+export type TaskPriority = "urgent_important" | "important" | "urgent" | "normal";
 export type InstanceStatus = "unscheduled" | "scheduled" | "completed" | "expired";
 export type Frequency = "daily" | "1" | "2" | "3" | "4" | "5" | "6";
 
@@ -43,7 +43,7 @@ export interface Task {
   cycle_id: string;
   title: string;
   category: TaskCategory;
-  priority: Priority;
+  priority: TaskPriority;
   scheduled_weeks: number[];
   frequency: Frequency;
   note: string | null;
