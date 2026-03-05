@@ -20,7 +20,7 @@ export function WeekTaskCard({ task, instance, onToggleComplete }: WeekTaskCardP
   const frequencyLabel =
     FREQUENCY_OPTIONS.find(option => option.value === task.frequency)?.label ?? task.frequency;
 
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `task-${task.id}`,
     data: {
       type: "task",
@@ -30,10 +30,6 @@ export function WeekTaskCard({ task, instance, onToggleComplete }: WeekTaskCardP
     },
     disabled: isCompleted,
   });
-
-  const style = {
-    transform: CSS.Translate.toString(transform),
-  };
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -45,14 +41,13 @@ export function WeekTaskCard({ task, instance, onToggleComplete }: WeekTaskCardP
   return (
     <div
       ref={setNodeRef}
-      style={style}
       {...listeners}
       {...attributes}
       className={cn(
         "rounded-lg border border-zinc-100 bg-white p-2.5 mb-2",
         "border-l-[3px] cursor-grab active:cursor-grabbing",
         "transition-all select-none",
-        isDragging && "opacity-40 shadow-lg",
+        isDragging && "opacity-0 pointer-events-none",
         isScheduled && !isCompleted && "opacity-50",
         isCompleted && "opacity-40",
         priorityConfig.borderColor,

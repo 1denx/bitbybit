@@ -29,15 +29,23 @@ export function CalendarDayColumn({
 }: CalendarDayColumnProps) {
   const dateStr = format(date, "yyyy-MM-dd");
   const timeSlots = generateTimeSlots();
+  const columnRef = useRef<HTMLDivElement>(null);
 
   const { setNodeRef, isOver } = useDroppable({
     id: `day-${dateStr}`,
     data: { dateStr },
   });
 
+  const setRefs = (node: HTMLDivElement | null) => {
+    setNodeRef(node);
+    (columnRef as React.RefObject<HTMLDivElement | null>).current = node;
+  };
+
   return (
     <div
       ref={setNodeRef}
+      data-date={dateStr}
+      data-column="true"
       className={cn(
         "flex-1 border-r border-zinc-100 relative min-w-0",
         isToday && "bg-zinc-50/60",
