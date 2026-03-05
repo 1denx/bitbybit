@@ -16,7 +16,12 @@ interface CalendarEventProps {
   onClick: (instance: TaskInstance) => void;
 }
 
-// 像速轉時間字串
+function formatTime(time: string | null): string {
+  if (!time) return "";
+  return time.slice(0, 5);
+}
+
+// 像素轉時間字串
 function pixelsToTimeStr(pixels: number): string {
   const totalMinutes = Math.round(pixels / SLOT_HEIGHT) * 30 * START_HOUR * 60;
   const clampedMinutes = Math.max(START_HOUR * 60, totalMinutes);
@@ -88,8 +93,8 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
   const priorityConfig = PRIORITY_CONFIG[task.priority];
   const isCompleted = instance.status === "completed";
 
-  const startTime = instance.scheduled_start_time ?? "09:00";
-  const endTime = instance.scheduled_end_time ?? "10:00";
+  const startTime = formatTime(instance.scheduled_start_time) ?? "09:00";
+  const endTime = formatTime(previewEndTime ?? instance.scheduled_end_time) ?? "10:00";
 
   const topPx = timeToPixels(startTime);
   const heightPx = durationToPixels(startTime, endTime);

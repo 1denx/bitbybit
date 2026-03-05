@@ -12,6 +12,11 @@ interface WeekTaskCardProps {
   onToggleComplete?: (instanceId: string) => void;
 }
 
+function formatTime(time: string | null): string {
+  if (!time) return "";
+  return time.slice(0, 5);
+}
+
 export function WeekTaskCard({ task, instance, onToggleComplete }: WeekTaskCardProps) {
   const isScheduled = !!instance;
   const isCompleted = instance?.status === "completed";
@@ -101,7 +106,7 @@ export function WeekTaskCard({ task, instance, onToggleComplete }: WeekTaskCardP
       {/* 已排程提示 */}
       {isScheduled && !isCompleted && (
         <div className="mt-1.5 text-[10px] text-zinc-400 font-mono">
-          {instance.scheduled_start_time} - {instance.scheduled_end_time}
+          {formatTime(instance.scheduled_start_time)} - {formatTime(instance.scheduled_end_time)}
         </div>
       )}
     </div>
