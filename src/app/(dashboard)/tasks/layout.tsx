@@ -11,7 +11,7 @@ import {
   getPrevWeekStart,
   formatWeekTitle,
 } from "@/src/lib/utils/calendar";
-import { isSameWeek } from "date-fns";
+import { format, isSameWeek } from "date-fns";
 
 export default function TaskLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -20,47 +20,57 @@ export default function TaskLayout({ children }: { children: React.ReactNode }) 
   const isWeekView = pathname === "/tasks/week";
   const isCurrentWeek = isSameWeek(currentWeekStart, new Date(), { weekStartsOn: 1 });
 
+  const isTodayView = pathname === "/tasks/today";
+  const todayLabel = format(new Date(), "yyyy/MM/dd (EEE)");
+
   return (
     <div className="flex flex-col h-full">
       {/* TopBar */}
-      <div className="flex items-center gap-2 border-b px-4 py-2 bg-white shrink-0">
+      <div className="relative flex items-center border-b px-4 py-2 bg-white shrink-0 h-12">
         {/* 週導覽 */}
-        {isWeekView && (
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 text-zinc-500"
-              onClick={() => setCurrentWeekStart(getPrevWeekStart(currentWeekStart))}
-            >
-              <ChevronLeft size={14} />
-            </Button>
-            <span className="text-sm font-semibold text-zinc-800 min-w-32.5 text-center">
-              {formatWeekTitle(currentWeekStart)}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 text-zinc-500"
-              onClick={() => setCurrentWeekStart(getNextWeekStart(currentWeekStart))}
-            >
-              <ChevronRight size={14} />
-            </Button>
-            {!isCurrentWeek && (
+        <div className="flex items-center gap-1">
+          {isWeekView && (
+            <div className="flex items-center gap-1">
               <Button
-                variant="outline"
-                size="sm"
-                className="h-7 text-xs px-2.5 text-zinc-500 ml-1"
-                onClick={() => setCurrentWeekStart(getThisWeekStart())}
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-zinc-500"
+                onClick={() => setCurrentWeekStart(getPrevWeekStart(currentWeekStart))}
               >
-                Today
+                <ChevronLeft size={14} />
               </Button>
-            )}
-          </div>
-        )}
+              <span className="text-sm font-semibold text-zinc-800 min-w-32.5 text-center">
+                {formatWeekTitle(currentWeekStart)}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-zinc-500"
+                onClick={() => setCurrentWeekStart(getNextWeekStart(currentWeekStart))}
+              >
+                <ChevronRight size={14} />
+              </Button>
+              {!isCurrentWeek && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs px-2.5 text-zinc-500 ml-1"
+                  onClick={() => setCurrentWeekStart(getThisWeekStart())}
+                >
+                  Today
+                </Button>
+              )}
+            </div>
+          )}
+
+          {/* 今日視圖標題 */}
+          {isTodayView && (
+            <span className="text-sm font-semibold text-zinc-800 font-mono mr-1">{todayLabel}</span>
+          )}
+        </div>
 
         {/* Tab 切換 */}
-        <div className={isWeekView ? "ml-2" : ""}>
+        <div className="absolute left-1/2 -translate-x-1/2">
           <TasksTabNav />
         </div>
 

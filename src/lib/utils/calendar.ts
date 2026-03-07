@@ -114,4 +114,10 @@ export function generateTimeSlots(): TimeSlitMeta[] {
   return slots;
 }
 
+// 把時間格式 "HH:mm:ss"，截取前五碼變成 "HH:mm"
+export function formatTimeStr(time: string | null | undefined): string {
+  if (!time) return "";
+  return time.slice(0, 5);
+}
+
 export { isSameDay, isToday, format, parseISO };
