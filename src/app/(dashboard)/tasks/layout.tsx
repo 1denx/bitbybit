@@ -11,11 +11,13 @@ import {
   getPrevWeekStart,
   formatWeekTitle,
 } from "@/src/lib/utils/calendar";
+import { TaskQuickCreateModal } from "@/src/components/modals/TaskQuickCreateModal";
 import { format, isSameWeek } from "date-fns";
 
 export default function TaskLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { currentWeekStart, setCurrentWeekStart, setQuickAddTaskModalOpen } = useUIStore();
+  const { currentWeekStart, setCurrentWeekStart, quickAddTaskModalOpen, setQuickAddTaskModalOpen } =
+    useUIStore();
 
   const isWeekView = pathname === "/tasks/week";
   const isCurrentWeek = isSameWeek(currentWeekStart, new Date(), { weekStartsOn: 1 });
@@ -86,6 +88,12 @@ export default function TaskLayout({ children }: { children: React.ReactNode }) 
       </div>
 
       <div className="flex-1 overflow-hidden">{children}</div>
+
+      {/* 快速新增 Modal */}
+      <TaskQuickCreateModal
+        open={quickAddTaskModalOpen}
+        onClose={() => setQuickAddTaskModalOpen(false)}
+      />
     </div>
   );
 }
