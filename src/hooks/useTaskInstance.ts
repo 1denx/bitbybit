@@ -18,6 +18,26 @@ export function useTaskInstances() {
   const { user } = useAuth();
   const { taskInstances, setTaskInstances, updateInstance } = useTaskStore();
 
+  const fetchAllInstancesByCycle = useCallback(
+    async (cycleId: string) => {
+      if (!user) return;
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("task_instances")
+          .select("*")
+          .eq("user_id", user.id)
+          .eq("cycle_id", cycleId);
+
+        if (error) throw error;
+        setTaskInstances((data ?? []) as TaskInstance[]);
+      } catch (error) {
+        console.error("fetchAllInstancesByCycle ERROR:", error);
+      }
+    },
+    [user],
+  );
+
   // 取得指定週期 + 週次的所有 TaskInstances
   const fetchInstancesByWeek = useCallback(
     async (cycleId: string, weekNumber: number) => {
@@ -208,6 +228,7 @@ export function useTaskInstances() {
 
   return {
     taskInstances,
+    fetchAllInstancesByCycle,
     fetchInstancesByWeek,
     fetchInstancesByDate,
     createInstance,

@@ -1,26 +1,87 @@
-import { Button } from "@/src/components/ui/button";
-import { Card } from "@/src/components/ui/card";
+"use client";
+
+import { cn } from "@/src/lib/utils";
+import { useEffect } from "react";
+import { format } from "date-fns";
+import { VisionCard } from "@/src/components/dashboard/VisionCard";
+import { StatsGrid } from "@/src/components/dashboard/StatsGrid";
+import { TrendChart } from "@/src/components/dashboard/TrendChart";
+import { TodayTaskWidget } from "@/src/components/dashboard/TodayTaskWidget";
+import { EmptyDashboard } from "@/src/components/dashboard/EmptyDashboard";
+import { useCycles } from "@/src/hooks/useCycles";
+import { useGoals } from "@/src/hooks/useGoals";
+import { useTasks } from "@/src/hooks/useTasks";
+import { useTaskInstances } from "@/src/hooks/useTaskInstance";
+import { useTaskStore } from "@/src/store/taskStore";
+import { useGoalStore } from "@/src/store/goalStore";
+import { useDashboardStats } from "@/src/hooks/useDashboardStats";
+import type { Task } from "@/src/types";
 
 export default function DashboardPage() {
+  const { cycles, fetchCycles } = useCycles();
+  const { fetchGoalsByCycle } = useGoals();
+  const { fetchTaskByCycle } = useTasks();
+  const { fetchAllInstancesByCycle } = useTaskInstances();
+
+  const { tasks, taskInstances } = useTaskStore();
+  const { goals } = useGoalStore();
+
+  const activeCycle =
+    cycles.find(cycle => cycle.status === "active") ??
+    cycles.find(cycle => cycle.status === "planning") ??
+    null;
+
+  const todayDateStr = format(new Date(), "yyyy-MM-dd");
+
+  useEffect(() => {
+    fetchCycles();
+  }, [fetchCycles]);
+
+  useEffect(() => {
+    if (activeCycle) {
+      fetchGoalsByCycle(activeCycle.id);
+      fetchTaskByCycle(activeCycle.id);
+      fetchAllInstancesByCycle(activeCycle.id);
+    }
+  }, [activeCycle?.id]);
+
+  // 建立 taskId
+  const taskMap: Record<string, Task> = {};
+  tasks.forEach(task => {
+    taskMap[task.id] = task;
+  });
+
+  const stats = useDashboardStats(activeCycle, goals, tasks, taskInstances, todayDateStr);
+
+  if (!activeCycle) {
+    return <EmptyDashboard />;
+  }
+
   return (
-    <>
-      <div className="flex flex-col gap-2.5 items-center justify-center p-10">
-        <h1 className="text-2xl font-bold">歡迎使用 BitByBit</h1>
-        <h3 className="text-lg text-zinc-500">
-          用 12 週的時間，達成多數人 12 個月才能做到的成就。
-        </h3>
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* TopBar */}
+      <div className="flex items-center gap-3 border-b px-6 py-3 bg-white shrink-0">
+        <h1 className="text-xl font-semibold text-zinc-900">儀表板</h1>
       </div>
-      <Card className="flex flex-col gap-5 items-center justify-center w-1/3 p-25 mx-auto border rounded-xl bg-white">
-        <div className="flex flex-col gap-1 items-center justify-center">
-          <h4 className="text-base font-semibold">開始計畫</h4>
-          <p className="text-sm">開啟你的 12 週計畫之旅</p>
+
+      {/* 內容 */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        {/* 願景內容 */}
+        <VisionCard cycle={activeCycle} currentWeekNumber={stats.currentWeekNumber} />
+
+        {/* 四格統計 */}
+        <StatsGrid stats={stats} />
+
+        {/* 趨勢圖 + 今日任務 */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="col-span-2">
+            <TrendChart weekStats={stats.weekStats} currentWeekNumber={stats.currentWeekNumber} />
+          </div>
+          <div>
+            <TodayTaskWidget todayInstances={stats.todayInstances} taskMap={taskMap} />
+          </div>
         </div>
-        <div className="flex flex-col gap-1 items-center justify-center">
-          <h4 className="text-base font-semibold">第一步：明確願景</h4>
-          <p className="text-sm">制定你的願景與週期，讓目標真正被執行</p>
-        </div>
-        <Button variant="outline">制定願景</Button>
-      </Card>
-    </>
+      </div>
+    </div>
   );
 }
