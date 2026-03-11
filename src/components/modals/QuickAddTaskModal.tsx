@@ -181,7 +181,7 @@ export function QuickAddTaskModal({ open, onClose, goalId, cycleId }: QuickAddTa
                     "w-7 h-7 rounded text-xs font-medium transition-colors cursor-pointer",
                     selectedWeeks.includes(weekNumber)
                       ? "bg-zinc-900 text-white"
-                      : "bg-white border border-zinc-900 text-zinc-400 hover:border-zinc-400",
+                      : "bg-white border border-zinc-200 text-zinc-400 hover:border-zinc-400",
                   )}
                 >
                   {weekNumber}

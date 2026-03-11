@@ -203,7 +203,7 @@ export function GoalModal({ open, onClose, cycleId, editTarget }: GoalModalProps
           </div>
 
           {/* 任務列表(新增模式才顯示) */}
-          {isEditMode && (
+          {!isEditMode && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label>任務</Label>
@@ -362,7 +362,7 @@ function DraftTaskForm({
               onClick={() => onUpdate({ frequency: frequencyOption.value as Frequency })}
               disabled={isSubmitting}
               className={cn(
-                "rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
+                "rounded-full px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer",
                 draftTask.frequency === frequencyOption.value
                   ? "bg-zinc-900 text-white"
                   : "bg-white border border-zinc-200 text-zinc-500 hover:border-zinc-400",
@@ -383,7 +383,7 @@ function DraftTaskForm({
               type="button"
               onClick={onSelectAll}
               disabled={isSubmitting}
-              className="text-xs text-zinc-400 hover:text-zinc-600 underline "
+              className="text-xs text-zinc-400 hover:text-zinc-600 underline cursor-pointer"
             >
               全選
             </button>
@@ -392,7 +392,7 @@ function DraftTaskForm({
               type="button"
               onClick={onClearAll}
               disabled={isSubmitting}
-              className="text-xs text-zinc-400 hover:text-zinc-600 underline"
+              className="text-xs text-zinc-400 hover:text-zinc-600 underline cursor-pointer"
             >
               清除
             </button>
@@ -406,12 +406,14 @@ function DraftTaskForm({
               onClick={() => onToggleWeek(weekNumber)}
               disabled={isSubmitting}
               className={cn(
-                "w-7 h-7 rounded text-xs font-medium transition-colors",
+                "w-7 h-7 rounded text-xs font-medium transition-colors cursor-pointer",
                 draftTask.scheduled_weeks.includes(weekNumber)
                   ? "bg-zinc-900 text-white"
-                  : "bg-white border-zinc-200 text-zinc-400 hover:border-zinc-400",
+                  : "bg-white border border-zinc-200 text-zinc-400 hover:border-zinc-400",
               )}
-            ></button>
+            >
+              {weekNumber}
+            </button>
           ))}
         </div>
       </div>
