@@ -13,17 +13,34 @@ import {
 } from "@/src/lib/utils/calendar";
 import { TaskQuickCreateModal } from "@/src/components/modals/TaskQuickCreateModal";
 import { format, isSameWeek } from "date-fns";
+import { useCycles } from "@/src/hooks/useCycles";
+import { useEffect } from "react";
+import { calcCycleWeekNumber } from "@/src/hooks/useCurrentWeek";
 
 export default function TaskLayout({ children }: { children: React.ReactNode }) {
+  const { cycles, fetchCycles } = useCycles();
+
   const pathname = usePathname();
   const { currentWeekStart, setCurrentWeekStart, quickAddTaskModalOpen, setQuickAddTaskModalOpen } =
     useUIStore();
+
+  useEffect(() => {
+    fetchCycles();
+  }, [fetchCycles]);
+
+  const activeCycle =
+    cycles.find(cycle => cycle.status === "active") ??
+    cycles.find(cycle => cycle.status === "planning") ??
+    null;
 
   const isWeekView = pathname === "/tasks/week";
   const isCurrentWeek = isSameWeek(currentWeekStart, new Date(), { weekStartsOn: 1 });
 
   const isTodayView = pathname === "/tasks/today";
-  const todayLabel = format(new Date(), "yyyy/MM/dd (EEE)");
+  const todayLabel = format(new Date(), "yyyy/MM/dd　(EEE)");
+
+  const isReviewView = pathname === "/tasks/review";
+  const weekNumber = activeCycle ? calcCycleWeekNumber(activeCycle.start_date) : 1;
 
   return (
     <div className="flex flex-col h-full">
@@ -67,7 +84,14 @@ export default function TaskLayout({ children }: { children: React.ReactNode }) 
 
           {/* 今日視圖標題 */}
           {isTodayView && (
-            <span className="text-sm font-semibold text-zinc-800 font-mono mr-1">{todayLabel}</span>
+            <span className="text-sm font-semibold text-zinc-800 mr-1">{todayLabel}</span>
+          )}
+
+          {/* 回顧 */}
+          {isReviewView && (
+            <span className="text-sm font-semibold text-zinc-800">
+              W{String(weekNumber).padStart(2, "0")} 回顧
+            </span>
           )}
         </div>
 
