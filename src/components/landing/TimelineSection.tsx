@@ -33,13 +33,13 @@ export function TimeLineSection() {
   return (
     <div className="mx-auto px-10 bg-black">
       <div className="flex flex-col items-center py-24 border-zinc-100 reveal">
-        <div className="text-xs font-medium tracking-widest text-white/40 uppercase mb-3">
+        <div className="text-sm font-medium tracking-widest text-white/40 uppercase mb-3">
           步驟引導
         </div>
-        <h2 className="serif text-white text-4xl font-bold tracking-[-0.02em] leading-[1.2] mb-3">
+        <h2 className="serif text-white text-center text-3xl sm:text-5xl lg:text-6xl font-bold tracking-[-0.02em] leading-[1.2] mb-3">
           從計畫到執行
         </h2>
-        <p className="text-base text-white/50 leading-[1.7] mb-12 max-w-120">
+        <p className="text-center text-base lg:text-lg text-white/50 leading-[1.7] mb-12 max-w-120">
           每完成一個任務，都是在推進目標的達成。
         </p>
         <div className="tl-wrap">
@@ -48,7 +48,8 @@ export function TimeLineSection() {
             <div className="tl-row reveal" key={step}>
               {side === "left" ? (
                 <>
-                  <div className="border border-white/10 bg-white/5 rounded-xl p-5 hover:border-white/20 hover:bg-white/10 transition-all">
+                  {/* 卡片在左 */}
+                  <div className="tl-card-left border border-white/10 bg-white/5 rounded-xl p-5 hover:border-white/20 hover:bg-white/10 transition-all">
                     <div className="text-[10px] text-zinc-400 tracking-[0.08em] uppercase mb-1">
                       {step}
                     </div>
@@ -60,17 +61,18 @@ export function TimeLineSection() {
                       className={`w-3 h-3 rounded-full border-2 ${active ? "bg-zinc-500 border-zinc-500" : "bg-white border-zinc-300"}`}
                     />
                   </div>
-                  <div />
+                  <div className="tl-empty-right" />
                 </>
               ) : (
                 <>
-                  <div />
+                  <div className="tl-empty-left" />
                   <div className="tl-dot-col">
                     <div
                       className={`w-3 h-3 rounded-full border-2 ${active ? "bg-zinc-500 border-zinc-500" : "bg-white border-zinc-300"}`}
                     />
                   </div>
-                  <div className="border border-white/10 bg-white/5 rounded-xl p-5 hover:border-white/20 hover:bg-white/10 transition-all">
+                  {/* 卡片在右 */}
+                  <div className="tl-card-right border border-white/10 bg-white/5 rounded-xl p-5 hover:border-white/20 hover:bg-white/10 transition-all">
                     <div className="text-[10px] text-zinc-400 tracking-[0.08em] uppercase mb-1">
                       {step}
                     </div>

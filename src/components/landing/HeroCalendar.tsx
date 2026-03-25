@@ -239,7 +239,7 @@ export function HeroCalendar() {
       </div>
 
       {/* hint */}
-      <div className="text-center text-[10px] text-zinc-400 py-1.5 border-t border-zinc-100">
+      <div className="text-center text-xs text-zinc-400 py-1.5 border-t border-zinc-100">
         拖曳任務移動時間　hover 底部調整長度
       </div>
     </div>

@@ -161,3 +161,35 @@
   position: relative;
   z-index: 2;
 }
+/* ── 手機版：單欄，線在左側 ── */
+@media (max-width: 767px) {
+  .tl-center-line {
+    left: 12px;
+    transform: none;
+  }
+  .tl-row {
+    grid-template-columns: 24px 1fr;
+    grid-template-rows: auto;
+    margin-bottom: 20px;
+    align-items: start;
+    gap: 0 12px;
+  }
+  .tl-dot-col {
+    grid-column: 1;
+    grid-row: 1;
+    align-items: flex-start;
+    padding-top: 14px;
+  }
+  /* 手機版左右兩側的空白欄都隱藏 */
+  .tl-empty-left,
+  .tl-empty-right {
+    display: none;
+  }
+  /* 卡片固定在第二欄 */
+  .tl-card-left,
+  .tl-card-right {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: left !important;
+  }
+}

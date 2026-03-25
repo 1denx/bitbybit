@@ -11,16 +11,16 @@ export function ShowcaseSection() {
   return (
     <div className="max-w-300 mx-auto px-10">
       <div className="flex flex-col items-center py-24 border-zinc-100 reveal">
-        <div className="text-xs font-medium tracking-widest text-zinc-400 uppercase mb-3">
+        <div className="text-sm font-medium tracking-widest text-zinc-400 uppercase mb-3">
           產品一覽
         </div>
-        <h2 className="serif text-4xl font-bold tracking-[-0.02em] leading-[1.2] mb-3">
+        <h2 className="serif text-center text-3xl sm:text-5xl lg:text-6xl font-bold tracking-[-0.02em] leading-[1.2] mb-3">
           每個視圖各司其職
         </h2>
-        <p className="text-base text-zinc-500 leading-[1.7] mb-12 max-w-120">
+        <p className="text-center text-base lg:text-lg text-zinc-500 leading-[1.7] mb-12 max-w-120">
           從宏觀到細節，切換視圖就能看到你需要的資訊。
         </p>
-        <div className="grid gap-12" style={{ gridTemplateColumns: "1fr 1.6fr" }}>
+        <div className="grid gap-12 lg:grid-cols-2">
           <div>
             <div className="text-base font-medium mb-2">完整的任務管理體驗</div>
             <p className="text-sm text-zinc-500 leading-[1.7]">

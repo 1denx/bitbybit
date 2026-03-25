@@ -32,10 +32,10 @@ export function FaqSection() {
   return (
     <div className="mx-auto px-10 bg-black">
       <div className="max-w-200 flex flex-col items-center py-24 reveal mx-auto">
-        <div className="text-xs font-medium tracking-widest text-zinc-400 uppercase mb-3">
+        <div className="text-sm font-medium tracking-widest text-zinc-400 uppercase mb-3">
           常見問題
         </div>
-        <h2 className="serif text-4xl font-bold text-white tracking-[-0.02em] leading-[1.2] mb-10">
+        <h2 className="serif text-center text-3xl sm:text-5xl lg:text-6xl font-bold text-white tracking-[-0.02em] leading-[1.2] mb-10">
           FAQ
         </h2>
         <Accordion type="single" collapsible className="w-full space-y-4">
