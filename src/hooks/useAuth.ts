@@ -14,6 +14,13 @@ export function useAuth() {
   const router = useRouter();
   const [isAuthLoading, setIsAuthLoading] = useState(false);
 
+  const displayName =
+    user?.user_metadata?.full_name ?? // Google 登入 / 更新過的名稱
+    user?.user_metadata?.name ?? // 部分 OAuth 用這個
+    user?.user_metadata?.display_name ?? // Email 註冊時填的名稱
+    user?.email?.split("@")[0] ?? // 最後的 fallback
+    "";
+
   const login = async (email: string, password: string): Promise<AuthResult> => {
     setIsAuthLoading(true);
 
@@ -84,7 +91,7 @@ export function useAuth() {
     isLoading,
     isAuthLoading,
     isAuthenticated: !!user,
-    displayName: user?.user_metadata?.display_name ?? user?.email?.split("@")[0] ?? "使用者",
+    displayName,
     login,
     register,
     loginWithGoogle,
