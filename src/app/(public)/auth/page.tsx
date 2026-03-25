@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/src/hooks/useAuth";
 import { LoginForm } from "@/src/components/ui/auth/LoginForm";
 import { RegisterForm } from "@/src/components/ui/auth/RegisterForm";
+import Link from "next/link";
 
 type AuthMode = "login" | "register";
 
@@ -38,9 +39,11 @@ export default function AuthPage() {
   return (
     <div className="flex min-h-screen flex-col bg-zinc-100">
       {/* Header */}
-      <header className="border-b border-zinc-200 px-6 py-4">
+      <header className="border-b border-zinc-200 px-10 py-4">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-zinc-900">BitByBit</span>
+          <Link href="/">
+            <span className="text-base font-semibold text-zinc-900">BitByBit</span>
+          </Link>
         </div>
       </header>
 
