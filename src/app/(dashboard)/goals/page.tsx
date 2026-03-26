@@ -56,7 +56,7 @@ export default function GoalsPage() {
       {/* TopBar */}
       <div className="flex items-center justify-between border-b px-6 py-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-xl font-semibold text-zinc-900">目標管理</h1>
+          <h1 className="text-sm lg:text-xl font-semibold text-zinc-900">目標管理</h1>
           <p className="text-xs text-zinc-400 mt-0.5">
             {activeCycle
               ? `${activeCycle.name} · ${
@@ -69,8 +69,8 @@ export default function GoalsPage() {
         </div>
         {activeCycle && (
           <Button onClick={() => setGoalModalOpen(true)} className="flex items-center">
-            <Plus size={14} className="mr-1" />
-            新增目標
+            <Plus size={14} className="lg:mr-1" />
+            <span className="hidden lg:block">新增目標</span>
           </Button>
         )}
       </div>
