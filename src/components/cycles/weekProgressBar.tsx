@@ -20,7 +20,7 @@ export function WeekProgressBar({ currentWeek, totalWeeks = 12 }: WeekProgressBa
               "h-1.5 flex-1 rounded-full transition-colors",
               isDone && "bg-zinc-700",
               isCurrent && "bg-zinc-400",
-              !isDone && "bg-zinc-200",
+              !isDone && !isCurrent && "bg-zinc-200",
             )}
           />
         );

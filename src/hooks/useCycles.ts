@@ -82,6 +82,7 @@ export function useCycles() {
         throw error;
       }
 
+      addCycle(data);
       return true;
     } catch (error) {
       return false;
