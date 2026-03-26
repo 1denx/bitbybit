@@ -19,6 +19,10 @@ interface UIStore {
   // 週視圖目前顯示的日期
   currentWeekStart: Date;
   setCurrentWeekStart: (date: Date) => void;
+
+  // Profile
+  profileName: string;
+  setProfileName: (name: string) => void;
 }
 
 export const useUIStore = create<UIStore>(set => ({
@@ -37,4 +41,7 @@ export const useUIStore = create<UIStore>(set => ({
 
   currentWeekStart: new Date(),
   setCurrentWeekStart: currentWeekStart => set({ currentWeekStart }),
+
+  profileName: "",
+  setProfileName: profileName => set({ profileName }),
 }));

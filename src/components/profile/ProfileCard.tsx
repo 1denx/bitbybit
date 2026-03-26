@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useUIStore } from "@/src/store/uiStore";
 import { createClient } from "@/src/lib/supabase/client";
 import { useAuth } from "@/src/hooks/useAuth";
 import { Button } from "../ui/button";
@@ -12,31 +13,32 @@ import { Link } from "lucide-react";
 
 export function ProfileCard() {
   const { user } = useAuth();
+  const { profileName, setProfileName } = useUIStore();
 
-  const avatarUrl: string | undefined = user?.user_metadata?.avatar_url;
-  const initialName: string =
-    user?.user_metadata?.full_name ??
-    user?.user_metadata?.name ??
-    user?.user_metadata?.display_name ??
-    user?.email?.split("@")[0] ??
-    "";
-  const [displayName, setDisplayName] = useState(initialName);
+  const [inputName, setInputName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  // 名字縮寫
-  const fallbackText = initialName.slice(0, 2).toUpperCase() || "U";
+  useEffect(() => {
+    if (profileName) setInputName(profileName);
+  }, [profileName]);
 
+  const avatarUrl: string | undefined = user?.user_metadata?.avatar_url;
+  const fallbackText = (profileName || inputName).slice(0, 2).toUpperCase() || "U"; // 名字縮寫
   const isGoogleUser = !!user?.app_metadata?.providers?.includes("google");
 
   const handleSave = async () => {
-    if (!displayName.trim()) return;
+    if (!inputName.trim()) return;
     setIsSaving(true);
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.updateUser({
-        data: { full_name: displayName.trim() },
+      const { error } = await supabase.from("profiles").upsert({
+        id: user!.id,
+        display_name: inputName.trim(),
+        updated_at: new Date().toISOString(),
       });
       if (error) throw error;
+
+      setProfileName(inputName.trim());
       toast.success("顯示名稱已更新");
     } catch (error) {
       console.error("updateUser ERROR:", error);
@@ -51,13 +53,15 @@ export function ProfileCard() {
       {/* Avatar */}
       <div className="flex items-center gap-4 mb-6">
         <Avatar className="w-14 h-14">
-          {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
+          {avatarUrl && <AvatarImage src={avatarUrl} alt={inputName} />}
           <AvatarFallback className="bg-zinc-100 text-zinc-600 text-base font-medium">
             {fallbackText}
           </AvatarFallback>
         </Avatar>
         <div>
-          <div className="text-sm font-medium text-zinc-800">{displayName}</div>
+          <div className="text-sm font-medium text-zinc-800">
+            {profileName || inputName || "未設定名稱"}
+          </div>
           <div className="text-xs text-zinc-400 mt-0.5">{user?.email}</div>
           {isGoogleUser && (
             <div className="text-[10px] text-zinc-400 mt-1 flex items-center gap-1">
@@ -78,8 +82,8 @@ export function ProfileCard() {
           </Label>
           <Input
             id="displayName"
-            value={displayName}
-            onChange={e => setDisplayName(e.target.value)}
+            value={inputName}
+            onChange={e => setInputName(e.target.value)}
             placeholder="輸入你的顯示名稱"
             disabled={isSaving}
           />
@@ -99,7 +103,7 @@ export function ProfileCard() {
       </div>
 
       <div className="flex justify-end mt-5">
-        <Button size="sm" onClick={handleSave} disabled={isSaving || !displayName.trim()}>
+        <Button size="sm" onClick={handleSave} disabled={isSaving || !inputName.trim()}>
           {isSaving ? "儲存中..." : "儲存變更"}
         </Button>
       </div>
