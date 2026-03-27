@@ -12,6 +12,13 @@ interface WeekTaskListProps {
   onToggleComplete: (instanceId: string) => void;
 }
 
+// 每周次數
+function frequencyToCount(frequency: string): number {
+  if (frequency === "daily") return 7;
+  const num = parseInt(frequency);
+  return isNaN(num) ? 1 : num;
+}
+
 export function WeekTaskList({
   tasks,
   taskInstances,
@@ -23,11 +30,14 @@ export function WeekTaskList({
   // 本週應執行的任務
   const thisWeekTasks = tasks.filter(task => task.scheduled_weeks.includes(weekNumber));
 
-  // 建立 taskId
-  const instanceByTaskId: Record<string, TaskInstance> = {};
+  // 本週每個 task 的 instances
+  const weekInstanceByTaskId: Record<string, TaskInstance[]> = {};
   taskInstances.forEach(instance => {
     if (instance.status === "scheduled" || instance.status === "completed") {
-      instanceByTaskId[instance.task_id] = instance;
+      if (!weekInstanceByTaskId[instance.task_id]) {
+        weekInstanceByTaskId[instance.task_id] = [];
+      }
+      weekInstanceByTaskId[instance.task_id].push(instance);
     }
   });
 
@@ -48,14 +58,22 @@ export function WeekTaskList({
             <p className="text-xs">本週沒有任務</p>
           </div>
         ) : (
-          thisWeekTasks.map(task => (
-            <WeekTaskCard
-              key={task.id}
-              task={task}
-              instance={instanceByTaskId[task.id] ?? null}
-              onToggleComplete={onToggleComplete}
-            />
-          ))
+          thisWeekTasks.map(task => {
+            const instances = weekInstanceByTaskId[task.id] ?? [];
+            const scheduledCount = instances.length;
+            const requireCount = frequencyToCount(task.frequency);
+
+            return (
+              <WeekTaskCard
+                key={task.id}
+                task={task}
+                instances={instances}
+                scheduledCount={scheduledCount}
+                requiredCount={requireCount}
+                onToggleComplete={onToggleComplete}
+              />
+            );
+          })
         )}
       </div>
 
