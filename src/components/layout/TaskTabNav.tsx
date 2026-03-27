@@ -36,7 +36,7 @@ export function TasksTabNav() {
           )}
         >
           <Icon size={13} />
-          {label}
+          <span className="hidden md:block">{label}</span>
         </Link>
       ))}
     </div>

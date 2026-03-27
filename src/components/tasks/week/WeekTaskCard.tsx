@@ -11,6 +11,8 @@ interface WeekTaskCardProps {
   scheduledCount: number;
   requiredCount: number;
   onToggleComplete?: (instanceId: string) => void;
+  onTaskClick?: (instance: TaskInstance) => void;
+  onUnscheduledTaskClick?: (task: Task) => void;
 }
 
 function formatTime(time: string | null): string {
@@ -24,6 +26,8 @@ export function WeekTaskCard({
   scheduledCount,
   requiredCount,
   onToggleComplete,
+  onTaskClick,
+  onUnscheduledTaskClick,
 }: WeekTaskCardProps) {
   const isAllScheduled = scheduledCount >= requiredCount;
   const completedCount = instances.filter(inst => inst.status === "completed").length;
@@ -49,7 +53,7 @@ export function WeekTaskCard({
       {...listeners}
       {...attributes}
       className={cn(
-        "rounded-lg border border-zinc-100 bg-white p-2.5 mb-2",
+        "rounded-lg border border-zinc-200 bg-white p-2.5 mb-2",
         "border-l-[3px] cursor-grab active:cursor-grabbing",
         "transition-all select-none",
         isDragging && "opacity-0 pointer-events-none",
@@ -118,11 +122,32 @@ export function WeekTaskCard({
         </span>
       </div>
 
+      {/* 手機板:未排滿時顯示排成按鈕 */}
+      {onUnscheduledTaskClick && scheduledCount < requiredCount && (
+        <button
+          type="button"
+          onMouseDown={e => e.stopPropagation()}
+          onClick={e => {
+            e.stopPropagation();
+            onUnscheduledTaskClick(task);
+          }}
+          className="mt-2 w-full flex items-center justify-center gap-1 py-1 rounded-md border border-dashed border-zinc-200 text-[10px] text-zinc-400 hover:border-zinc-400 hover:text-zinc-600 transition-colors cursor-pointer"
+        >
+          <span>+</span>
+          <span>排程此任務</span>
+        </button>
+      )}
+
       {/* 各 instance 的時間 */}
       {instances.length > 0 && (
         <div className="mt-1.5 space-y-0.5">
           {instances.map(inst => (
-            <div key={inst.id} className="flex items-center gap-1.5">
+            <div
+              key={inst.id}
+              className="flex items-center gap-1.5"
+              onClick={onTaskClick ? () => onTaskClick(inst) : undefined}
+              style={onTaskClick ? { cursor: "pointer" } : undefined}
+            >
               {/* 勾選 */}
               <button
                 type="button"
@@ -152,6 +177,9 @@ export function WeekTaskCard({
                 {inst.scheduled_date?.slice(5).replace("-", "/")}｜
                 {formatTime(inst.scheduled_start_time)}
               </span>
+
+              {/* 手機板點擊提示 */}
+              {onTaskClick && <span className="text-[10px] text-zinc-300">›</span>}
             </div>
           ))}
         </div>

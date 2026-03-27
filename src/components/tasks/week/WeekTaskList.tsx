@@ -10,6 +10,8 @@ interface WeekTaskListProps {
   taskInstances: TaskInstance[];
   weekNumber: number;
   onToggleComplete: (instanceId: string) => void;
+  onTaskClick?: (instance: TaskInstance) => void;
+  onUnscheduledTaskClick?: (task: Task) => void;
 }
 
 // 每周次數
@@ -24,6 +26,8 @@ export function WeekTaskList({
   taskInstances,
   weekNumber,
   onToggleComplete,
+  onTaskClick,
+  onUnscheduledTaskClick,
 }: WeekTaskListProps) {
   const { getExpiredInstances } = useTaskInstances();
 
@@ -48,7 +52,7 @@ export function WeekTaskList({
       {/* Header */}
       <div className="px-3 py-2.5 border-b border-zinc-200">
         <h2 className="text-xs font-semibold text-zinc-600">本週任務</h2>
-        <p className="text-[10px] text-zinc-400 mt-0.5">拖曳任務到右側週曆排程</p>
+        <p className="text-[10px] text-zinc-400 mt-0.5 hidden md:block">拖曳任務到右側週曆排程</p>
       </div>
 
       {/* Task List */}
@@ -71,6 +75,8 @@ export function WeekTaskList({
                 scheduledCount={scheduledCount}
                 requiredCount={requireCount}
                 onToggleComplete={onToggleComplete}
+                onTaskClick={onTaskClick}
+                onUnscheduledTaskClick={onUnscheduledTaskClick}
               />
             );
           })

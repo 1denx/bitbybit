@@ -47,7 +47,7 @@ export default function TaskLayout({ children }: { children: React.ReactNode }) 
       {/* TopBar */}
       <div className="relative flex items-center border-b px-4 py-2 bg-white shrink-0 h-12">
         {/* 週導覽 */}
-        <div className="flex items-center gap-1">
+        <div className="hidden sm:flex items-center gap-1">
           {isWeekView && (
             <div className="flex items-center gap-1">
               <Button
@@ -96,7 +96,7 @@ export default function TaskLayout({ children }: { children: React.ReactNode }) 
         </div>
 
         {/* Tab 切換 */}
-        <div className="absolute left-1/2 -translate-x-1/2">
+        <div className="absolute left-1/2 -translate-x-1/2 -ml-9 sm:ml-0">
           <TasksTabNav />
         </div>
 
@@ -106,10 +106,19 @@ export default function TaskLayout({ children }: { children: React.ReactNode }) 
           className="ml-auto bg-zinc-900 text-white hover:bg-zinc-700 h-8"
           onClick={() => setQuickAddTaskModalOpen(true)}
         >
-          <Plus size={13} className="mr-1.5" />
-          新增任務
+          <Plus size={13} className="sm:mr-1.5" />
+          <span className="hidden sm:block">新增任務</span>
         </Button>
       </div>
+
+      {/* 桌機以下: 週導覽 */}
+      {isWeekView && (
+        <div className="sm:hidden flex items-center justify-center gap-1 py-2 border-b border-zinc-200">
+          <span className="text-sm font-semibold text-zinc-800 min-w-32.5 text-center">
+            {formatWeekTitle(currentWeekStart)}
+          </span>
+        </div>
+      )}
 
       <div className="flex-1 overflow-hidden">{children}</div>
 

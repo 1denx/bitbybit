@@ -217,7 +217,7 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
           <div className="flex items-start justify-between gap-2">
             <button
               onClick={handleCheckboxClick}
-              className="w-4 h-4 rounded-full border-[1.5px] flex items-center justify-center transition-all shrink-0 cursor-pointer"
+              className="w-4 h-4 rounded-full border-[1.5px] transition-all shrink-0 cursor-pointer hidden lg:block"
               style={{
                 borderColor: getBorderColor(task.priority),
                 backgroundColor: isCompleted ? getBorderColor(task.priority) : "transparent",
@@ -230,7 +230,7 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
             <div className="flex-1">
               <div
                 className={cn(
-                  "font-semibold leading-tight flex-1 truncate",
+                  "font-semibold leading-tight flex-1 text-wrap",
                   isCompleted && "line-through",
                   getTextColor(task.priority),
                 )}
@@ -240,7 +240,7 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
               </div>
               {!isShort && (
                 <div
-                  className={cn("mt-1 opacity-70", getTextColor(task.priority))}
+                  className={cn("mt-1 opacity-70 hidden lg:block", getTextColor(task.priority))}
                   style={{ fontSize: "10px", fontFamily: "monospace" }}
                 >
                   {startTime} – {endTime}

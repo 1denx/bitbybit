@@ -1,14 +1,10 @@
 "use client";
 
-import { useRef } from "react";
 import { format, isToday } from "date-fns";
 import { CalendarDayColumn } from "./CalendarDayColumn";
-import { generateTimeSlots, SLOT_HEIGHT, formatDayLabel } from "@/src/lib/utils/calendar";
+import { generateTimeSlots, SLOT_HEIGHT } from "@/src/lib/utils/calendar";
 import { cn } from "@/src/lib/utils";
 import type { TaskInstance, Task } from "@/src/types";
-import { Dice1 } from "lucide-react";
-import { Slot } from "radix-ui";
-import { Span } from "next/dist/trace";
 
 interface WeekCalendarProps {
   weekDays: Date[];
@@ -29,9 +25,9 @@ export function WeekCalendar({
   return (
     <div className="flex flex-col flex-1 overflow-hidden">
       {/* Day Headers */}
-      <div className="flex border-b border-zinc-100 shrink-0 bg-white">
+      <div className="flex border-b border-zinc-200 shrink-0 bg-white">
         {/* Time gutter */}
-        <div className="w-12 shrink-0 border-r border-zinc-100" />
+        <div className="w-12 shrink-0 border-r border-zinc-200" />
 
         {/* Day header cells */}
         {weekDays.map((day, dayIndex) => {
@@ -39,7 +35,7 @@ export function WeekCalendar({
           return (
             <div
               key={dayIndex}
-              className="flex-1 flex flex-col items-center justify-center py-2 border-r border-zinc-100 last:border-r-0"
+              className="flex-1 flex flex-col items-center justify-center py-2 border-r border-zinc-200 last:border-r-0"
             >
               <span className="text-[10px] text-zinc-400 font-mono mb-1">
                 {DAY_LABELS[dayIndex]}
@@ -59,21 +55,19 @@ export function WeekCalendar({
 
       {/* Scrollable Grid */}
       <div className="flex-1 overflow-y-auto">
-        <div className="flex">
+        <div className="flex flex-1 overflow-y-auto">
           {/* Time labels column */}
-          <div className="w-12 shrink-0 border-r border-zinc-100">
+          <div className="w-12 shrink-0 border-r border-zinc-200">
             {timeSlots.map((slot, slotIndex) => (
               <div
                 key={slotIndex}
                 className="flex items-start justify-end pr-2 pt-0.5"
                 style={{ height: SLOT_HEIGHT }}
               >
-                {slot.isHourStart ? (
+                {slot.isHourStart && (
                   <span className="text-[10px] text-zinc-400 font-mono leading-none">
                     {slot.label}
                   </span>
-                ) : (
-                  <div className="w-2 h-px bg-zinc-200 mt-2.5" />
                 )}
               </div>
             ))}
