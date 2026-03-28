@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -14,12 +14,13 @@ import {
 import { format } from "date-fns";
 import { WeekTaskList } from "./WeekTaskList";
 import { WeekCalendar } from "./WeekCalendar";
-import { TaskOffcanvas } from "../TaskOffcanvas";
+import { TaskOffcanvas } from "./TaskOffcanvas";
 import { useTaskInstances } from "@/src/hooks/useTaskInstance";
 import { useTaskStore } from "@/src/store/taskStore";
 import { useUIStore } from "@/src/store/uiStore";
 import { getDefaultEndTime, pixelsToTime, SLOT_HEIGHT, START_HOUR } from "@/src/lib/utils/calendar";
 import type { Task, TaskInstance } from "@/src/types";
+import { cn } from "@/src/lib/utils";
 
 interface WeekViewProps {
   weekDays: Date[];
@@ -57,9 +58,18 @@ export function WeekView({ weekDays, cycleId, weekNumber }: WeekViewProps) {
   const { createInstance, rescheduleInstance, completeInstance, uncompleteInstance } =
     useTaskInstances();
   const { offcanvasOpen, selectInstanceId, openOffcanvas, closeOffcanvas } = useUIStore();
+  const [isMobile, setIsMobile] = useState(false);
+  const [scheduledTargetTask, setScheduledTargetTask] = useState<Task | null>(null);
+  const [scheduleOffcanvasOpen, setScheduleOffcanvasOpen] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const lastMouseYRef = useRef<number>(0);
-
   const [activeDragTaskId, setActiveDragTaskId] = useState<string | null>(null);
   const [activeDragInstance, setActiveDragInstance] = useState<{
     task: Task;
@@ -73,7 +83,6 @@ export function WeekView({ weekDays, cycleId, weekNumber }: WeekViewProps) {
   });
 
   const selectedInstance = taskInstances.find(instance => instance.id === selectInstanceId) ?? null;
-
   const selectedTask = selectedInstance ? taskMap[selectedInstance.task_id] : null;
 
   // 同一 task 本週所有 instances
@@ -211,6 +220,34 @@ export function WeekView({ weekDays, cycleId, weekNumber }: WeekViewProps) {
 
   const activeDragTask = activeDragTaskId ? taskMap[activeDragTaskId] : null;
 
+  const handleTaskClickMobile = (instance: TaskInstance) => {
+    openOffcanvas(instance.id);
+  };
+
+  const handleUnscheduledTaskClick = (task: Task) => {
+    setScheduledTargetTask(task);
+    setScheduleOffcanvasOpen(true);
+  };
+
+  const handleScheduleFromOffcanvas = async (
+    dateStr: string,
+    startTime: string,
+    endTime: string,
+  ) => {
+    if (!scheduledTargetTask) return;
+    await createInstance(
+      scheduledTargetTask.id,
+      scheduledTargetTask.goal_id,
+      cycleId,
+      weekNumber,
+      dateStr,
+      startTime,
+      endTime,
+    );
+    setScheduleOffcanvasOpen(false);
+    setScheduledTargetTask(null);
+  };
+
   return (
     <DndContext
       sensors={sensors}
@@ -220,22 +257,31 @@ export function WeekView({ weekDays, cycleId, weekNumber }: WeekViewProps) {
     >
       <div className="flex h-full overflow-hidden">
         {/* 左側任務列表 */}
-        <div className="w-52 shrink-0 border-r border-zinc-100">
+        <div
+          className={
+            (cn("shrink-0 border-r border-zinc-200"),
+            isMobile ? "w-full" : "md:w-35 lg:w-52 shrink-0 border-r border-zinc-200")
+          }
+        >
           <WeekTaskList
             tasks={tasks}
             taskInstances={taskInstances}
             weekNumber={weekNumber}
             onToggleComplete={handleToggleComplete}
+            onTaskClick={isMobile ? handleTaskClickMobile : undefined}
+            onUnscheduledTaskClick={isMobile ? handleUnscheduledTaskClick : undefined}
           />
         </div>
 
         {/* 右側週曆 */}
-        <WeekCalendar
-          weekDays={weekDays}
-          taskInstances={taskInstances}
-          taskMap={taskMap}
-          onEventClick={handleEventClick}
-        />
+        {!isMobile && (
+          <WeekCalendar
+            weekDays={weekDays}
+            taskInstances={taskInstances}
+            taskMap={taskMap}
+            onEventClick={handleEventClick}
+          />
+        )}
       </div>
 
       {/* Drag Overlay：拖曳中顯示的浮動預覽 */}
@@ -271,6 +317,22 @@ export function WeekView({ weekDays, cycleId, weekNumber }: WeekViewProps) {
         weekInstances={weekInstancesForSelected}
         onComplete={completeInstance}
         onUncomplete={uncompleteInstance}
+      />
+
+      {/* 排程 Offcanvas（未排程任務手機版用）*/}
+      <TaskOffcanvas
+        open={scheduleOffcanvasOpen}
+        onClose={() => {
+          setScheduleOffcanvasOpen(false);
+          setScheduledTargetTask(null);
+        }}
+        instance={null}
+        task={scheduledTargetTask}
+        weekInstances={[]}
+        onComplete={completeInstance}
+        onUncomplete={uncompleteInstance}
+        weekDays={weekDays}
+        onSchedule={handleScheduleFromOffcanvas}
       />
     </DndContext>
   );

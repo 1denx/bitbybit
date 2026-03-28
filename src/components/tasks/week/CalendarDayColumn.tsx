@@ -47,9 +47,9 @@ export function CalendarDayColumn({
       data-date={dateStr}
       data-column="true"
       className={cn(
-        "flex-1 border-r border-zinc-100 relative min-w-0",
+        "flex-1 border-r border-zinc-200 relative min-w-0",
         isToday && "bg-zinc-50/60",
-        isOver && "bg-zinc-100/80",
+        isOver && "bg-zinc-200/80",
       )}
     >
       {/* 時間格子 */}
@@ -57,10 +57,10 @@ export function CalendarDayColumn({
         <div
           key={`${slot.hour}-${slot.minute}`}
           className={cn(
-            "border-zinc-100",
+            "border-zinc-200",
             slot.isHourStart
               ? "border-t border-b border-dashed border-zinc-100"
-              : "border-b border-dashed border-zinc-100/70",
+              : "border-b border-dashed border-zinc-200/70",
           )}
           style={{ height: SLOT_HEIGHT }}
         />

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../lib/supabase/client";
 import { useAuthContext } from "../context/AuthContext";
 import { getAuthErrorMessage } from "../lib/utils/authErrors";
+import { useUIStore } from "../store/uiStore";
 
 interface AuthResult {
   success: boolean;
@@ -11,8 +12,43 @@ interface AuthResult {
 
 export function useAuth() {
   const { user, session, isLoading, signOut } = useAuthContext();
+  const { profileName, setProfileName } = useUIStore();
   const router = useRouter();
   const [isAuthLoading, setIsAuthLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setProfileName("");
+      return;
+    }
+    const fetchProfile = async () => {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("profiles")
+        .select("display_name")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (data?.display_name) {
+        setProfileName(data.display_name);
+      } else {
+        setProfileName(
+          user.user_metadata?.full_name ??
+            user.user_metadata?.display_name ??
+            user.email?.split("@")[0] ??
+            "",
+        );
+      }
+    };
+    fetchProfile();
+  }, [user?.id]);
+
+  const displayName =
+    profileName ||
+    user?.user_metadata?.full_name || // Google 登入 / 更新過的名稱
+    user?.user_metadata?.display_name || // Email 註冊時填的名稱
+    user?.email?.split("@")[0] || // 最後的 fallback
+    "";
 
   const login = async (email: string, password: string): Promise<AuthResult> => {
     setIsAuthLoading(true);
@@ -84,7 +120,7 @@ export function useAuth() {
     isLoading,
     isAuthLoading,
     isAuthenticated: !!user,
-    displayName: user?.user_metadata?.display_name ?? user?.email?.split("@")[0] ?? "使用者",
+    displayName,
     login,
     register,
     loginWithGoogle,

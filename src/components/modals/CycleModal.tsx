@@ -70,7 +70,7 @@ export function CycleModal({ open, onClose, editTarget }: CycleModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
+      <DialogContent className="max-w-xs sm:max-w-md" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>{isEdit ? "編輯週期" : "新增週期"}</DialogTitle>
         </DialogHeader>
@@ -125,7 +125,11 @@ export function CycleModal({ open, onClose, editTarget }: CycleModalProps) {
             <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               取消
             </Button>
-            <Button type="submit" disabled={isSubmitting || !name.trim() || !startDate}>
+            <Button
+              type="submit"
+              disabled={isSubmitting || !name.trim() || !startDate}
+              className="mb-4 sm:mb-0"
+            >
               {isSubmitting ? "處理中..." : isEdit ? "儲存變更" : "建立週期"}
             </Button>
           </DialogFooter>

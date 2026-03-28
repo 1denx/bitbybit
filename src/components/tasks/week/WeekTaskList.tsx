@@ -10,6 +10,15 @@ interface WeekTaskListProps {
   taskInstances: TaskInstance[];
   weekNumber: number;
   onToggleComplete: (instanceId: string) => void;
+  onTaskClick?: (instance: TaskInstance) => void;
+  onUnscheduledTaskClick?: (task: Task) => void;
+}
+
+// 每周次數
+function frequencyToCount(frequency: string): number {
+  if (frequency === "daily") return 7;
+  const num = parseInt(frequency);
+  return isNaN(num) ? 1 : num;
 }
 
 export function WeekTaskList({
@@ -17,17 +26,22 @@ export function WeekTaskList({
   taskInstances,
   weekNumber,
   onToggleComplete,
+  onTaskClick,
+  onUnscheduledTaskClick,
 }: WeekTaskListProps) {
   const { getExpiredInstances } = useTaskInstances();
 
   // 本週應執行的任務
   const thisWeekTasks = tasks.filter(task => task.scheduled_weeks.includes(weekNumber));
 
-  // 建立 taskId
-  const instanceByTaskId: Record<string, TaskInstance> = {};
+  // 本週每個 task 的 instances
+  const weekInstanceByTaskId: Record<string, TaskInstance[]> = {};
   taskInstances.forEach(instance => {
     if (instance.status === "scheduled" || instance.status === "completed") {
-      instanceByTaskId[instance.task_id] = instance;
+      if (!weekInstanceByTaskId[instance.task_id]) {
+        weekInstanceByTaskId[instance.task_id] = [];
+      }
+      weekInstanceByTaskId[instance.task_id].push(instance);
     }
   });
 
@@ -38,7 +52,7 @@ export function WeekTaskList({
       {/* Header */}
       <div className="px-3 py-2.5 border-b border-zinc-200">
         <h2 className="text-xs font-semibold text-zinc-600">本週任務</h2>
-        <p className="text-[10px] text-zinc-400 mt-0.5">拖曳任務到右側週曆排程</p>
+        <p className="text-[10px] text-zinc-400 mt-0.5 hidden md:block">拖曳任務到右側週曆排程</p>
       </div>
 
       {/* Task List */}
@@ -48,14 +62,24 @@ export function WeekTaskList({
             <p className="text-xs">本週沒有任務</p>
           </div>
         ) : (
-          thisWeekTasks.map(task => (
-            <WeekTaskCard
-              key={task.id}
-              task={task}
-              instance={instanceByTaskId[task.id] ?? null}
-              onToggleComplete={onToggleComplete}
-            />
-          ))
+          thisWeekTasks.map(task => {
+            const instances = weekInstanceByTaskId[task.id] ?? [];
+            const scheduledCount = instances.length;
+            const requireCount = frequencyToCount(task.frequency);
+
+            return (
+              <WeekTaskCard
+                key={task.id}
+                task={task}
+                instances={instances}
+                scheduledCount={scheduledCount}
+                requiredCount={requireCount}
+                onToggleComplete={onToggleComplete}
+                onTaskClick={onTaskClick}
+                onUnscheduledTaskClick={onUnscheduledTaskClick}
+              />
+            );
+          })
         )}
       </div>
 

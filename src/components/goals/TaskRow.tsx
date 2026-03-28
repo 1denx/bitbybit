@@ -1,4 +1,4 @@
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { Button } from "../ui/button";
 import { PRIORITY_CONFIG, FREQUENCY_OPTIONS } from "@/src/lib/utils/priority";
 import { cn } from "@/src/lib/utils";
@@ -7,9 +7,10 @@ import type { Task } from "@/src/types";
 interface TaskRowProps {
   task: Task;
   onDelete: (taskId: string) => void;
+  onEdit: (task: Task) => void;
 }
 
-export function TaskRow({ task, onDelete }: TaskRowProps) {
+export function TaskRow({ task, onDelete, onEdit }: TaskRowProps) {
   const priorityConfig = PRIORITY_CONFIG[task.priority];
 
   const frequencyLabel =
@@ -43,7 +44,7 @@ export function TaskRow({ task, onDelete }: TaskRowProps) {
         {/* 核心/額外 */}
         <span
           className={cn(
-            "rounded-full px-2 py-0.5 text-xs font-medium",
+            "rounded-full px-2 py-0.5 text-xs font-medium hidden sm:block",
             task.category === "core"
               ? "bg-zinc-900 text-white"
               : "bg-zinc-100 text-zinc-500 border border-zinc-200",
@@ -53,15 +54,26 @@ export function TaskRow({ task, onDelete }: TaskRowProps) {
         </span>
 
         {/* 頻率 */}
-        <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 border border-zinc-200">
+        <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 border border-zinc-200 hidden sm:block">
           {frequencyLabel}
         </span>
 
         {/* 執行週數 */}
-        <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 border border-zinc-200">
+        <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 border border-zinc-200 hidden sm:block">
           {weekRangeLabel}
         </span>
       </div>
+
+      {/* 編輯按鈕 */}
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        className="h-6 w-6 shrink-0 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-all"
+        onClick={() => onEdit(task)}
+      >
+        <Pencil size={12} />
+      </Button>
 
       {/* 刪除按鈕 */}
       <Button

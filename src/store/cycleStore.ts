@@ -43,7 +43,7 @@ export const useCycleStore = create<CycleStore>(set => ({
 
   removeCycle: id =>
     set(state => ({
-      cycle: state.cycles.filter(cycle => cycle.id !== id),
+      cycles: state.cycles.filter(cycle => cycle.id !== id),
       activeCycle: state.activeCycle?.id === id ? null : state.activeCycle,
     })),
 }));

@@ -153,56 +153,54 @@ export function CycleCard({ cycle, goalCount, onEdit }: CycleCardProps) {
               <span>{goalCount} 個目標</span>
             </>
           )}
+        </div>
 
-          {/* 進度條 */}
-          <WeekProgressBar
-            currentWeek={cycle.status === "active" ? currentWeek : null}
-          ></WeekProgressBar>
+        {/* 進度條 */}
+        <WeekProgressBar currentWeek={cycle.status === "active" ? currentWeek : null} />
 
-          {/* Action 按鈕 */}
-          <div className="flex items-center j gap-2 mt-4">
-            {cycle.status === "planning" && (
-              <>
-                <Button size="sm" onClick={handleStart} disabled={isActing}>
-                  <Play size={13} className="mr-1" />
-                  開始執行
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-sky-600 border-sky-200 hover:bg-sky-50 hover:text-sky-700"
-                  onClick={() => router.push("/goals")}
-                >
-                  <Target size={13} className="mr-1" />
-                  前往新增目標
-                </Button>
-              </>
-            )}
-            {cycle.status === "active" && (
+        {/* Action 按鈕 */}
+        <div className="flex items-center j gap-2 mt-4">
+          {cycle.status === "planning" && (
+            <>
+              <Button size="sm" onClick={handleStart} disabled={isActing}>
+                <Play size={13} className="mr-1" />
+                開始執行
+              </Button>
               <Button
                 size="sm"
                 variant="outline"
-                className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
-                onClick={handleComplete}
-                disabled={isActing}
+                className="text-sky-600 border-sky-200 hover:bg-sky-50 hover:text-sky-700"
+                onClick={() => router.push("/goals")}
               >
-                <CheckCircle size={13} className="mr-1" />
-                標記完成
+                <Target size={13} className="mr-1" />
+                前往新增目標
               </Button>
-            )}
-            {cycle.status === "completed" && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-zinc-500 border-zinc-200 hover:bg-zinc-50"
-                onClick={handleReopen}
-                disabled={isActing}
-              >
-                <RotateCcw size={13} className="mr-1" />
-                重新開啟
-              </Button>
-            )}
-          </div>
+            </>
+          )}
+          {cycle.status === "active" && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+              onClick={handleComplete}
+              disabled={isActing}
+            >
+              <CheckCircle size={13} className="mr-1" />
+              標記完成
+            </Button>
+          )}
+          {cycle.status === "completed" && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="text-zinc-500 border-zinc-200 hover:bg-zinc-50"
+              onClick={handleReopen}
+              disabled={isActing}
+            >
+              <RotateCcw size={13} className="mr-1" />
+              重新開啟
+            </Button>
+          )}
         </div>
 
         {/* 刪除確認 */}

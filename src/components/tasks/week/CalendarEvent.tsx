@@ -214,18 +214,42 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
       {/* isDragging 時隱藏內容 */}
       {!isDragging && (
         <>
-          <div className="flex items-start justify-between gap-1">
-            <div
-              className={cn(
-                "font-semibold leading-tight flex-1 truncate",
-                isCompleted && "line-through",
-                getTextColor(task.priority),
-              )}
-              style={{ fontSize: isShort ? "10px" : "12px" }}
+          <div className="flex items-start justify-between gap-2">
+            <button
+              onClick={handleCheckboxClick}
+              className="w-4 h-4 rounded-full border-[1.5px] transition-all shrink-0 cursor-pointer hidden lg:block"
+              style={{
+                borderColor: getBorderColor(task.priority),
+                backgroundColor: isCompleted ? getBorderColor(task.priority) : "transparent",
+              }}
             >
-              {task.title}
+              {isCompleted && (
+                <span style={{ fontSize: "8px", color: "#fff", lineHeight: 1 }}>✓</span>
+              )}
+            </button>
+            <div className="flex-1">
+              <div
+                className={cn(
+                  "font-semibold leading-tight flex-1 text-wrap",
+                  isCompleted && "line-through",
+                  getTextColor(task.priority),
+                )}
+                style={{ fontSize: isShort ? "10px" : "12px" }}
+              >
+                {task.title}
+              </div>
+              {!isShort && (
+                <div
+                  className={cn("mt-1 opacity-70 hidden lg:block", getTextColor(task.priority))}
+                  style={{ fontSize: "10px", fontFamily: "monospace" }}
+                >
+                  {startTime} – {endTime}
+                  {isResizing && <span className="ml-1 font-semibold opacity-100">↕</span>}
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-0.5 shrink-0">
+
+            <div>
               {isHovered && !isShort && (
                 <button
                   onClick={handleDeleteClick}
@@ -234,30 +258,8 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
                   <Trash2 size={12} />
                 </button>
               )}
-              <button
-                onClick={handleCheckboxClick}
-                className="w-4 h-4 rounded-full border-[1.5px] flex items-center justify-center transition-all shrink-0 cursor-pointer"
-                style={{
-                  borderColor: getBorderColor(task.priority),
-                  backgroundColor: isCompleted ? getBorderColor(task.priority) : "transparent",
-                }}
-              >
-                {isCompleted && (
-                  <span style={{ fontSize: "8px", color: "#fff", lineHeight: 1 }}>✓</span>
-                )}
-              </button>
             </div>
           </div>
-
-          {!isShort && (
-            <div
-              className={cn("mt-1 opacity-70", getTextColor(task.priority))}
-              style={{ fontSize: "10px", fontFamily: "monospace" }}
-            >
-              {startTime} – {endTime}
-              {isResizing && <span className="ml-1 font-semibold opacity-100">↕</span>}
-            </div>
-          )}
 
           {/* Resize Handle */}
           {!isCompleted && (
@@ -271,17 +273,14 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
               style={{ backgroundColor: getBorderColor(task.priority) + "40" }}
             >
               <div className="flex flex-col gap-px">
-                {[0, 1].map(lineIndex => (
-                  <div
-                    key={lineIndex}
-                    className="w-6 rounded-full"
-                    style={{
-                      height: "1px",
-                      backgroundColor: getBorderColor(task.priority),
-                      opacity: 0.6,
-                    }}
-                  />
-                ))}
+                <div
+                  className="w-6 rounded-full"
+                  style={{
+                    height: "2px",
+                    backgroundColor: getBorderColor(task.priority),
+                    opacity: 0.6,
+                  }}
+                />
               </div>
             </div>
           )}

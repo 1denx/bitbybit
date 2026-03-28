@@ -14,7 +14,7 @@ import {
   User,
   ChevronLeft,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/src/lib/utils";
 import { toast } from "sonner";
 
@@ -30,6 +30,18 @@ export function Sidebar() {
   const pathname = usePathname();
   const { displayName, logout } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => {
+      const mobile = window.innerWidth < 640;
+      setIsMobile(mobile);
+      setCollapsed(mobile);
+    };
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -79,6 +91,9 @@ export function Sidebar() {
           <Link
             key={href}
             href={href}
+            onClick={() => {
+              if (isMobile) setCollapsed(true);
+            }}
             className={cn(
               "flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors rounded-md",
               collapsed && "justify-center px-0",
@@ -97,6 +112,9 @@ export function Sidebar() {
       <div className="flex flex-col gap-2 border-t border-white/10 p-2">
         <Link
           href="/profile"
+          onClick={() => {
+            if (isMobile) setCollapsed(true);
+          }}
           className={cn(
             "flex items-center gap-2.5 px-4 py-2.5 text-sm text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700 rounded-md",
             collapsed && "justify-center px-0",

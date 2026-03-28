@@ -130,6 +130,29 @@ export function useTasks() {
     }
   };
 
+  // 矩陣拖曳更新優先級
+  const updateTaskPriority = useCallback(
+    async (taskId: string, priority: TaskPriority) => {
+      if (!user) return;
+      try {
+        const { error } = await supabase
+          .from("tasks")
+          .update({ priority })
+          .eq("id", taskId)
+          .eq("user_id", user.id);
+
+        if (error) throw error;
+
+        // 直接更新 store
+        updateTask(taskId, { priority } as Task);
+      } catch (error) {
+        console.error("updateTaskPriority ERROR:", error);
+        toast.error("優先級更新失敗");
+      }
+    },
+    [user],
+  );
+
   // 刪除任務
   const deleteTask = async (taskId: string): Promise<boolean> => {
     try {
@@ -160,5 +183,6 @@ export function useTasks() {
     editTask,
     deleteTask,
     getTasksByGoal,
+    updateTaskPriority,
   };
 }

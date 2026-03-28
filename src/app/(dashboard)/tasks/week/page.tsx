@@ -1,22 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/src/components/ui/button";
 import { WeekView } from "@/src/components/tasks/week/WeekView";
 import { useCycles } from "@/src/hooks/useCycles";
 import { useTasks } from "@/src/hooks/useTasks";
 import { useTaskInstances } from "@/src/hooks/useTaskInstance";
 import { useUIStore } from "@/src/store/uiStore";
 import { calcCycleWeekNumber } from "@/src/hooks/useCurrentWeek";
-import {
-  getWeekDays,
-  getThisWeekStart,
-  getNextWeekStart,
-  getPrevWeekStart,
-  formatWeekTitle,
-} from "@/src/lib/utils/calendar";
-import { startOfWeek, isSameWeek } from "date-fns";
+import { getWeekDays } from "@/src/lib/utils/calendar";
 
 export default function WeekPage() {
   const { cycles, fetchCycles } = useCycles();
@@ -32,7 +23,6 @@ export default function WeekPage() {
   const weekNumber = activeCycle ? calcCycleWeekNumber(activeCycle.start_date) : 1;
 
   const weekDays = getWeekDays(currentWeekStart);
-  const isCurrentWeek = isSameWeek(currentWeekStart, new Date(), { weekStartsOn: 1 });
 
   useEffect(() => {
     fetchCycles();

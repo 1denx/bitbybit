@@ -1,16 +1,28 @@
-import Link from "next/link";
+"use client";
+
+import { LandingNav } from "@/src/components/landing/LandingNav";
+import { HeroSection } from "@/src/components/landing/HeroSection";
+import { FeaturesSection } from "@/src/components/landing/FeaturesSection";
+import { TimeLineSection } from "@/src/components/landing/TimelineSection";
+import { ShowcaseSection } from "@/src/components/landing/ShowcaseSection";
+import { FaqSection } from "@/src/components/landing/FaqSection";
+import { CtaSection } from "@/src/components/landing/CtaSection";
+import { Footer } from "@/src/components/landing/Footer";
+import { ScrollReveal } from "@/src/components/landing/ScrollReveal";
+import "./landing.css";
 
 export default function HomePage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <h1 className="mb-4 text-3xl font-bold">BitByBit</h1>
-      <p className="mb-8 text-zinc-500">12 週目標執行系統</p>
-      <Link
-        href="/auth"
-        className="rounded-lg bg-zinc-900 px-6 py-3 text-white transition-colors hover:bg-zinc-700"
-      >
-        開始使用
-      </Link>
+    <div className="min-h-screen bg-white text-zinc-900">
+      <LandingNav />
+      <HeroSection />
+      <FeaturesSection />
+      <TimeLineSection />
+      <ShowcaseSection />
+      <FaqSection />
+      <CtaSection />
+      <Footer />
+      <ScrollReveal />
     </div>
   );
 }

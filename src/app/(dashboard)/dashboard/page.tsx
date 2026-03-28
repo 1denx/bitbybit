@@ -73,8 +73,8 @@ export default function DashboardPage() {
         <StatsGrid stats={stats} />
 
         {/* 趨勢圖 + 今日任務 */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="col-span-2">
+        <div className="grid lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2">
             <TrendChart weekStats={stats.weekStats} currentWeekNumber={stats.currentWeekNumber} />
           </div>
           <div>

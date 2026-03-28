@@ -14,7 +14,7 @@ interface TodayColumnCardProps {
   onToggleComplete: (instanceId: string) => void;
 }
 
-function TodayColumnCad({ task, instance, isCompleted, onToggleComplete }: TodayColumnCardProps) {
+function TodayColumnCard({ task, instance, isCompleted, onToggleComplete }: TodayColumnCardProps) {
   const priorityConfig = PRIORITY_CONFIG[task.priority];
   const frequencyLabel =
     FREQUENCY_OPTIONS.find(option => option.value === task.frequency)?.label ?? task.frequency;
@@ -26,7 +26,7 @@ function TodayColumnCad({ task, instance, isCompleted, onToggleComplete }: Today
   return (
     <div
       className={cn(
-        "rounded-lg border border-zinc-100 bg-white p-3",
+        "rounded-lg border border-zinc-200 bg-white p-3",
         "border-l-[3px] transition-all",
         isCompleted && "bg-zinc-50",
         priorityConfig.borderColor,
@@ -39,7 +39,7 @@ function TodayColumnCad({ task, instance, isCompleted, onToggleComplete }: Today
             type="button"
             onClick={() => onToggleComplete(instance.id)}
             className={cn(
-              "mt-0.5 w-4 h-4 rounded-full border-[1.5px] flex items-center justify-center shrink-0 transition-all cursor-pointer",
+              "w-5 h-5 rounded-full border-[1.5px] flex items-center justify-center shrink-0 transition-all cursor-pointer",
               isCompleted ? "bg-zinc-900 border-zinc-900" : "border-zinc-300 hover:border-zinc-600",
             )}
           >
@@ -52,7 +52,7 @@ function TodayColumnCad({ task, instance, isCompleted, onToggleComplete }: Today
         <div className="flex-1 min-w-0">
           <div
             className={cn(
-              "text-xs font-medium text-zinc-800 truncate",
+              "text-sm font-medium text-zinc-800 truncate",
               isCompleted && "line-through text-zinc-400",
             )}
           >
@@ -60,10 +60,10 @@ function TodayColumnCad({ task, instance, isCompleted, onToggleComplete }: Today
           </div>
 
           {/* Meta */}
-          <div className="flex items-center gap-1.5 mt-1">
+          <div className="flex items-center gap-1.5 md:mt-1">
             <span
               className={cn(
-                "rounded-full px-1.5 py-0.5 text-[9px] font-medium",
+                "rounded-full px-1.5 py-0.5 text-[10px] font-medium hidden md:block",
                 task.category === "core"
                   ? "bg-zinc-900 text-white"
                   : "bg-zinc-100 text-zinc-500 border border-zinc-200",
@@ -71,17 +71,17 @@ function TodayColumnCad({ task, instance, isCompleted, onToggleComplete }: Today
             >
               {task.category === "core" ? "核心" : "額外"}
             </span>
-            <span className="text-[9px] text-zinc-400">{frequencyLabel}</span>
+            <span className="text-[10px] text-zinc-400 hidden md:block">{frequencyLabel}</span>
           </div>
+
+          {/* 排程時間 */}
+          {hasTime && (
+            <div className="mt-2 text-[10px] text-zinc-400 font-mono hidden md:block">
+              {startTime} - {endTime}
+            </div>
+          )}
         </div>
       </div>
-
-      {/* 排程時間 */}
-      {hasTime && (
-        <div className="mt-2 text-[9px] text-zinc-400 font-mono">
-          {startTime} - {endTime}
-        </div>
-      )}
     </div>
   );
 }
@@ -100,7 +100,7 @@ function TodayColumn({ title, count, countVariant, emptyMessage, children }: Tod
     <div className="flex flex-col min-h-0 border border-t-0 border-r-zinc-200 p-4">
       {/* 欄標題 */}
       <div className="flex items-center gap-2 mb-3 pb-3 border-b border-zinc-200">
-        <span className="text-xs font-semibold text-zinc-700">{title}</span>
+        <span className="text-sm font-semibold text-zinc-700">{title}</span>
         <span
           className={cn(
             "rounded-full px-2 py-0.5 text-[10px] font-medium ml-auto",
@@ -117,7 +117,7 @@ function TodayColumn({ title, count, countVariant, emptyMessage, children }: Tod
       <div className="space-y-2 flex-1 overflow-y-auto">
         {count === 0 ? (
           <div className="text-center py-6">
-            <p className="text-[11px] text-zinc-300">{emptyMessage}</p>
+            <p className="text-xs text-zinc-300">{emptyMessage}</p>
           </div>
         ) : (
           children
@@ -157,8 +157,26 @@ export function TodayColumns({
 
   return (
     <div className="flex-1 overflow-auto">
-      <div className="grid grid-cols-3 h-full">
-        {/* 欄一:已完成 */}
+      <div className="grid sm:grid-cols-3 h-full">
+        {/* 欄一:額外任務 */}
+        <TodayColumn
+          title="額外任務"
+          count={extraTasks.length}
+          countVariant="outline"
+          emptyMessage="本週沒有額外任務"
+        >
+          {extraTasks.map(task => (
+            <TodayColumnCard
+              key={task.id}
+              task={task}
+              instance={null}
+              isCompleted={false}
+              onToggleComplete={onToggleComplete}
+            />
+          ))}
+        </TodayColumn>
+
+        {/* 欄二:已完成 */}
         <TodayColumn
           title="已完成"
           count={completedInstances.length}
@@ -169,7 +187,7 @@ export function TodayColumns({
             const task = taskMap[instance.task_id];
             if (!task) return null;
             return (
-              <TodayColumnCad
+              <TodayColumnCard
                 key={instance.id}
                 task={task}
                 instance={instance}
@@ -178,24 +196,6 @@ export function TodayColumns({
               />
             );
           })}
-        </TodayColumn>
-
-        {/* 欄二:額外任務 */}
-        <TodayColumn
-          title="額外任務"
-          count={extraTasks.length}
-          countVariant="outline"
-          emptyMessage="本週沒有額外任務"
-        >
-          {extraTasks.map(task => (
-            <TodayColumnCad
-              key={task.id}
-              task={task}
-              instance={null}
-              isCompleted={false}
-              onToggleComplete={onToggleComplete}
-            />
-          ))}
         </TodayColumn>
 
         {/* 欄三:未完成 */}
@@ -209,7 +209,7 @@ export function TodayColumns({
             const task = taskMap[instance.task_id];
             if (!task) return null;
             return (
-              <TodayColumnCad
+              <TodayColumnCard
                 key={instance.id}
                 task={task}
                 instance={instance}

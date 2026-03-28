@@ -90,7 +90,7 @@ export function TaskQuickCreateModal({ open, onClose }: TaskQuickCreateModalProp
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-sm" aria-describedby={undefined}>
+      <DialogContent className="max-w-xs sm:max-w-md" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>快速新增任務</DialogTitle>
         </DialogHeader>
@@ -242,7 +242,11 @@ export function TaskQuickCreateModal({ open, onClose }: TaskQuickCreateModalProp
             <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               取消
             </Button>
-            <Button type="submit" disabled={isSubmitting || !taskTitle.trim() || !selectedGoalId}>
+            <Button
+              type="submit"
+              disabled={isSubmitting || !taskTitle.trim() || !selectedGoalId}
+              className="mb-4 sm:mb-0"
+            >
               {isSubmitting ? "建立中..." : "建立"}
             </Button>
           </DialogFooter>

@@ -25,6 +25,7 @@ import { useGoals } from "@/src/hooks/useGoals";
 import { useTasks } from "@/src/hooks/useTasks";
 import { cn } from "@/src/lib/utils";
 import type { Goal, Task } from "@/src/types";
+import { EditTaskModal } from "../modals/EditTaskModal";
 
 interface GoalCardProps {
   goal: Goal;
@@ -41,6 +42,7 @@ export function GoalCard({ goal, tasks, cycleId, onEdit, onAddTask }: GoalCardPr
   const [isExpanded, setIsExpanded] = useState(true);
   const [deleteGoalOpen, setDeleteGoalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [editTaskTarget, setEditTaskTarget] = useState<Task | null>(null);
 
   const coreTasKCount = tasks.filter(task => task.category === "core").length;
   const extraTaskCount = tasks.filter(task => task.category === "extra").length;
@@ -64,7 +66,7 @@ export function GoalCard({ goal, tasks, cycleId, onEdit, onAddTask }: GoalCardPr
           {/* 優先級標示 */}
           <div
             className={cn(
-              "shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium",
+              "shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium hidden sm:block",
               goal.priority === "main"
                 ? "bg-zinc-900 text-white"
                 : "bg-zinc-100 text-zinc-500 border border-zinc-200",
@@ -79,12 +81,12 @@ export function GoalCard({ goal, tasks, cycleId, onEdit, onAddTask }: GoalCardPr
           {/* 任務數量 */}
           <div className="flex items-center gap-1.5 text-xs text-zinc-400 shrink-0">
             {coreTasKCount > 0 && (
-              <span className="rounded-full bg-zinc-900 text-white px-2 py-0.5 text-xs">
+              <span className="rounded-full bg-zinc-900 text-white px-2 py-0.5 text-xs hidden sm:block">
                 核心 {coreTasKCount}
               </span>
             )}
             {extraTaskCount > 0 && (
-              <span className="rounded-full bg-zinc-100 text-zinc-500 border border-zinc-200 px-2 py-0.5 text-xs">
+              <span className="rounded-full bg-zinc-100 text-zinc-500 border border-zinc-200 px-2 py-0.5 text-xs hidden sm:block">
                 額外 {extraTaskCount}
               </span>
             )}
@@ -151,7 +153,12 @@ export function GoalCard({ goal, tasks, cycleId, onEdit, onAddTask }: GoalCardPr
             ) : (
               <>
                 {tasks.map(task => (
-                  <TaskRow key={task.id} task={task} onDelete={handleDeleteTask} />
+                  <TaskRow
+                    key={task.id}
+                    task={task}
+                    onDelete={handleDeleteTask}
+                    onEdit={task => setEditTaskTarget(task)}
+                  />
                 ))}
                 <Button
                   type="button"
@@ -190,6 +197,13 @@ export function GoalCard({ goal, tasks, cycleId, onEdit, onAddTask }: GoalCardPr
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* 編輯任務 Modal */}
+      <EditTaskModal
+        open={!!editTaskTarget}
+        onClose={() => setEditTaskTarget(null)}
+        task={editTaskTarget}
+      />
     </>
   );
 }

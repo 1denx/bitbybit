@@ -81,8 +81,8 @@ export function TodayTaskWidget({ todayInstances, taskMap }: TodayTaskWidgetProp
               <div
                 key={instance.id}
                 className={cn(
-                  "flex items-center gap-3 py-2 px-3 rounded-lg border-l-[2px]",
-                  "bg-zinc-50/50 border border-zinc-100",
+                  "flex items-center gap-3 py-2 px-3 rounded-lg border border-l-2",
+                  "bg-zinc-50/50 border-zinc-200",
                   isCompleted && "opacity-50",
                   priorityConfig.borderColor,
                 )}
