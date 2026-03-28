@@ -96,7 +96,7 @@ export function BoardView({ cycleId, weekNumber }: BoardViewProps) {
   };
 
   return (
-    <div className="flex h-full overflow-hidden p-4 gap-4">
+    <div className="grid sm:grid-cols-2 lg:grid-cols-4 h-full overflow-hidden p-4 gap-4">
       <BoardColumn
         type="unscheduled"
         items={unscheduledItems}

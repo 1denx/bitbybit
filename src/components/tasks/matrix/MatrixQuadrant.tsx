@@ -51,7 +51,7 @@ export function MatrixQuadrant({ priority, tasks }: MatrixQuadrantProps) {
       ref={setNodeRef}
       className={cn(
         "flex flex-col rounded-xl border p-3 min-h-0 transition-colors",
-        isOver && "right-2 right-zinc-400 ring-offset-1",
+        isOver && "ring-2 ring-zinc-200 ring-offset-1",
       )}
     >
       {/* 象限標題 */}
@@ -60,7 +60,7 @@ export function MatrixQuadrant({ priority, tasks }: MatrixQuadrantProps) {
         <span className={cn("text-xs font-medium text-zinc-600", config.titleColor)}>
           {config.title}
         </span>
-        <span className="ml-auto text-xs text-zinc-400">{tasks.length}</span>
+        <span className="ml-auto text-xs text-zinc-400 hidden sm:block">{tasks.length}</span>
       </div>
 
       {/* 任務卡片 */}

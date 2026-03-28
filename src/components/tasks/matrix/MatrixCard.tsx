@@ -1,9 +1,8 @@
 "use client";
 
 import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/src/lib/utils";
-import { FREQUENCY_OPTIONS } from "@/src/lib/utils/priority";
+import { FREQUENCY_OPTIONS, PRIORITY_CONFIG } from "@/src/lib/utils/priority";
 import type { Task } from "@/src/types";
 
 interface MatrixCardProps {
@@ -11,13 +10,15 @@ interface MatrixCardProps {
 }
 
 export function MatrixCard({ task }: MatrixCardProps) {
-  const { setNodeRef, listeners, attributes, transform, isDragging } = useDraggable({
+  const { setNodeRef, listeners, attributes, isDragging } = useDraggable({
     id: task.id,
     data: { taskId: task.id, currentPriority: task.priority },
   });
 
   const frequencyLabel =
     FREQUENCY_OPTIONS.find(opt => opt.value === task.frequency)?.label ?? task.frequency;
+
+  const priorityConfig = PRIORITY_CONFIG[task.priority];
 
   return (
     <div
@@ -26,6 +27,8 @@ export function MatrixCard({ task }: MatrixCardProps) {
       {...attributes}
       className={cn(
         "rounded-lg border border-zinc-200 bg-white px-3 py-2.5",
+        "border-l-[3px]",
+        priorityConfig.borderColor,
         "cursor-grab active:cursor-grabbing select-none",
         "transition-shadow",
         isDragging && "opacity-0 pointer-events-none",
@@ -43,6 +46,7 @@ export function MatrixCard({ task }: MatrixCardProps) {
         >
           {task.category === "core" ? "核心" : "額外"}
         </span>
+        <span className="text-[10px] text-zinc-400 hidden sm:block">{frequencyLabel}</span>
       </div>
     </div>
   );

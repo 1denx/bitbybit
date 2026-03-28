@@ -50,7 +50,7 @@ export function ReviewStatsGrid({ stats }: ReviewStatsGridProps) {
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {cards.map((card, index) => (
         <div key={index} className="rounded-xl border border-zinc-200 bg-white p-4">
           <div className="text-xs font-medium text-zinc-500 mb-2">{card.label}</div>

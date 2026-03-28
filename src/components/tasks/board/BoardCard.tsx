@@ -46,7 +46,7 @@ export function BoardCard({ task, instance, variant, onToggleComplete }: BoardCa
             type="button"
             onClick={() => onToggleComplete(instance.id)}
             className={cn(
-              "mt-0.5 w-4 h-4 rounded-full border-[1.5px] flex items-center justify-center shrink-0 transition-all cursor-pointer",
+              "w-5 h-5 rounded-full border-[1.5px] flex items-center justify-center shrink-0 transition-all cursor-pointer",
               isCompleted ? "bg-zinc-900 border-zinc-900" : "border-zinc-300 hover:border-zinc-600",
             )}
           >
@@ -70,7 +70,7 @@ export function BoardCard({ task, instance, variant, onToggleComplete }: BoardCa
           <div className="flex items-center gap-1.5 mt-1">
             <span
               className={cn(
-                "rounded-full px-1.5 py-0.5 text-[10px] font-medium",
+                "rounded-full px-1.5 py-0.5 text-[10px] font-medium hidden sm:block",
                 task.category === "core"
                   ? "bg-zinc-900 text-white"
                   : "bg-zinc-100 text-zinc-500 border border-zinc-200",
@@ -78,31 +78,33 @@ export function BoardCard({ task, instance, variant, onToggleComplete }: BoardCa
             >
               {task.category === "core" ? "核心" : "額外"}
             </span>
-            <span className="text-[10px] text-zinc-400">{frequencyLabel}</span>
+            <span className="text-[10px] text-zinc-400 hidden sm:block">{frequencyLabel}</span>
           </div>
+
+          {/* 日期 / 時間 */}
+          {(dateLabel || startTime) && (
+            <div className="mt-2 flex items-center gap-1.5 text-[9px] font-mono">
+              {/* 過期提示 */}
+              {isExpired && (
+                <span className="mt-0.5 text-[10px] text-rose-600 shrink-0">
+                  <TriangleAlert size={12} />
+                </span>
+              )}
+              {dateLabel && (
+                <span className={cn(isExpired ? "text-rose-600" : "text-zinc-400")}>
+                  {dateLabel}
+                </span>
+              )}
+              {startTime && (
+                <span className={cn(isExpired ? "text-rose-600" : "text-zinc-400")}>
+                  {startTime}
+                  {endTime ? ` – ${endTime}` : ""}
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
-
-      {/* 日期 / 時間 */}
-      {(dateLabel || startTime) && (
-        <div className="mt-2 flex items-center gap-1.5 text-[9px] font-mono">
-          {/* 過期提示 */}
-          {isExpired && (
-            <span className="mt-0.5 text-[10px] text-rose-600 shrink-0">
-              <TriangleAlert size={12} />
-            </span>
-          )}
-          {dateLabel && (
-            <span className={cn(isExpired ? "text-rose-600" : "text-zinc-400")}>{dateLabel}</span>
-          )}
-          {startTime && (
-            <span className={cn(isExpired ? "text-rose-600" : "text-zinc-400")}>
-              {startTime}
-              {endTime ? ` – ${endTime}` : ""}
-            </span>
-          )}
-        </div>
-      )}
     </div>
   );
 }
