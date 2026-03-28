@@ -22,7 +22,7 @@ export function TodayTaskItem({ task, instance, onToggleComplete }: TodayTaskIte
   return (
     <div
       className={cn(
-        "flex items-center gap-3 p-3 rounded-lg border border-zinc-100 bg-white",
+        "flex items-center gap-3 p-3 rounded-lg border border-zinc-200 bg-white",
         "border-l-[3px] transition-all",
         isCompleted && "opacity-50",
         priorityConfig.borderColor,

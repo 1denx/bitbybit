@@ -40,9 +40,9 @@ export function TodayView({ cycleId, weekNumber }: TodayViewProps) {
   };
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex flex-col sm:flex-row h-full overflow-hidden">
       {/* 左側:待執行清單 */}
-      <div className="w-80 shrink-0 border-r border-zinc-200">
+      <div className="lg:w-60 xl:w-80 shrink-0 border-b sm:border-b-0 border-r border-zinc-200">
         <TodayTaskList
           todayInstances={todayInstances}
           taskMap={taskMap}

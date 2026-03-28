@@ -24,8 +24,8 @@ export function TodayTaskList({ todayInstances, taskMap, onToggleComplete }: Tod
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-zinc-200">
-        <div className="text-xs font-semibold text-zinc-600">今日待執行</div>
+      <div className="p-4 border-b border-zinc-200">
+        <div className="text-sm font-semibold text-zinc-600">今日待執行</div>
 
         {/* 完成進度條 */}
         {todayInstances.length > 0 && (
