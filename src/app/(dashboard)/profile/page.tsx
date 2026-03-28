@@ -11,7 +11,7 @@ export default function ProfilePage() {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6">
-        <div className="w-full grid grid-cols-2 gap-4">
+        <div className="w-full grid sm:grid-cols-2 gap-4">
           <ProfileCard />
           <PasswordCard />
         </div>

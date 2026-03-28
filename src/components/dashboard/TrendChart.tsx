@@ -20,11 +20,11 @@ export function TrendChart({ weekStats, currentWeekNumber }: TrendChartProps) {
   }
 
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-5">
-      <div className="flex items-center justify-between mb-4">
+    <div className="rounded-xl border border-zinc-200 bg-white p-3 sm:p-5">
+      <div className="flex items-start sm:items-center justify-between mb-4">
         <span className="text-xs font-semibold text-zinc-600">12 週達成趨勢（核心任務）</span>
         {/* 圖例 */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-center gap-3">
           <div className="flex items-center gap-1.5">
             <div className="w-2.5 h-2.5 rounded-sm bg-zinc-900"></div>
             <span className="text-[10px] text-zinc-400">已完成</span>
@@ -78,7 +78,7 @@ export function TrendChart({ weekStats, currentWeekNumber }: TrendChartProps) {
               {/* 週次標籤 */}
               <div
                 className={cn(
-                  "text-[10px]",
+                  "text-[8px] sm:text-[10px]",
                   weekStat.isCurrent ? "text-zinc-900 font-bold" : "text-zinc-400",
                 )}
               >

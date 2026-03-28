@@ -26,10 +26,10 @@ export function HistoryCard({ history }: HistoryCardProps) {
   const endLabel = format(parseISO(cycle.end_date), "yyyy/MM/dd");
 
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-col sm:flex-row gap-4">
       {/* 績效指標說明 */}
       {isExpanded && (
-        <div className="w-44 shrink-0 rounded-xl border border-zinc-200 bg-white p-4">
+        <div className="w-full sm:w-44 shrink-0 rounded-xl border border-zinc-200 bg-white p-4">
           <div className="text-xs font-semibold text-zinc-700 mb-3">績效指標</div>
           <div className="space-y-2">
             {PERFORMANCE_LEGEND.map(item => (

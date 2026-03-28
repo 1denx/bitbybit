@@ -41,7 +41,7 @@ export function StatsGrid({ stats }: StatsGridProps) {
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {statCards.map((statCard, statCardIndex) => (
         <div key={statCardIndex} className="rounded-xl border border-zinc-200 bg-white p-4">
           <div className="text-[10px] text-zinc-400 mb-2">{statCard.label}</div>

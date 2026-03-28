@@ -56,7 +56,7 @@ export default function GoalsPage() {
       {/* TopBar */}
       <div className="flex items-center justify-between border-b px-6 py-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-sm lg:text-xl font-semibold text-zinc-900">目標管理</h1>
+          <h1 className="text-xl lg:text-xl font-semibold text-zinc-900">目標管理</h1>
           <p className="text-xs text-zinc-400 mt-0.5">
             {activeCycle
               ? `${activeCycle.name} · ${
@@ -88,8 +88,8 @@ export default function GoalsPage() {
         {/* 沒有進行中的週期 */}
         {!isLoading && !activeCycle && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <AlertCircle size={32} className="text-zinc-300 mb-3" />
-            <h3 className="font-semibold text-zinc-300 mb-3">沒有進行中的週期</h3>
+            <AlertCircle size={32} className="text-zinc-700 mb-3" />
+            <h3 className="font-semibold text-zinc-700 mb-3">沒有進行中的週期</h3>
             <p className="text-sm text-zinc-400">請先至週期管理建立並開始執行一個週期</p>
           </div>
         )}

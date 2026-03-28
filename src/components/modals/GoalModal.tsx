@@ -157,7 +157,7 @@ export function GoalModal({ open, onClose, cycleId, editTarget }: GoalModalProps
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
-        className="sm:max-w-lg max-h-[90vh] overflow-y-auto"
+        className="max-w-xs sm:max-w-md max-h-[90vh] overflow-y-auto"
         aria-describedby={undefined}
       >
         <DialogHeader>
@@ -250,7 +250,11 @@ export function GoalModal({ open, onClose, cycleId, editTarget }: GoalModalProps
             <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               取消
             </Button>
-            <Button type="submit" disabled={isSubmitting || !goalTitle.trim()}>
+            <Button
+              type="submit"
+              disabled={isSubmitting || !goalTitle.trim()}
+              className="mb-4 sm:mb-0"
+            >
               {isSubmitting ? "處理中..." : isEditMode ? "儲存變更" : "建立目標"}
             </Button>
           </DialogFooter>

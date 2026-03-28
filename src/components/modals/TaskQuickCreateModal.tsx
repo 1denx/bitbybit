@@ -90,7 +90,7 @@ export function TaskQuickCreateModal({ open, onClose }: TaskQuickCreateModalProp
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-xs sm:max-w-sm" aria-describedby={undefined}>
+      <DialogContent className="max-w-xs sm:max-w-md" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>快速新增任務</DialogTitle>
         </DialogHeader>

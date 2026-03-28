@@ -37,8 +37,8 @@ export default function CyclesPage() {
           <h1 className="text-xl font-semibold text-zinc-900">週期管理</h1>
         </div>
         <Button onClick={() => setModalOpen(true)} className="flex items-center">
-          <Plus size={14} className="mr-1" />
-          新增週期
+          <Plus size={14} className="sm:mr-1" />
+          <span className="hidden sm:block">新增週期</span>
         </Button>
       </div>
 

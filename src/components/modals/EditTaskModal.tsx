@@ -70,7 +70,7 @@ export function EditTaskModal({ open, onClose, task }: EditTaskModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-sm" aria-describedby={undefined}>
+      <DialogContent className="max-w-xs sm:max-w-md" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>編輯任務</DialogTitle>
         </DialogHeader>
@@ -195,7 +195,11 @@ export function EditTaskModal({ open, onClose, task }: EditTaskModalProps) {
             <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               取消
             </Button>
-            <Button type="submit" disabled={isSubmitting || !taskTitle.trim()}>
+            <Button
+              type="submit"
+              disabled={isSubmitting || !taskTitle.trim()}
+              className="mb-4 sm:mb-0"
+            >
               {isSubmitting ? "更新中..." : "儲存變更"}
             </Button>
           </DialogFooter>
