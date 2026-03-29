@@ -6,7 +6,7 @@ import { useCycles } from "@/src/hooks/useCycles";
 import { useTasks } from "@/src/hooks/useTasks";
 import { useTaskInstances } from "@/src/hooks/useTaskInstance";
 import { useUIStore } from "@/src/store/uiStore";
-import { calcCycleWeekNumber } from "@/src/hooks/useCurrentWeek";
+import { calcWeekNumberFromDate } from "@/src/hooks/useCurrentWeek";
 import { getWeekDays } from "@/src/lib/utils/calendar";
 
 export default function WeekPage() {
@@ -20,7 +20,9 @@ export default function WeekPage() {
     cycles.find(cycle => cycle.status === "planning") ??
     null;
 
-  const weekNumber = activeCycle ? calcCycleWeekNumber(activeCycle.start_date) : 1;
+  const weekNumber = activeCycle
+    ? calcWeekNumberFromDate(activeCycle.start_date, currentWeekStart)
+    : 1;
 
   const weekDays = getWeekDays(currentWeekStart);
 

@@ -5,7 +5,7 @@ import { format, startOfWeek } from "date-fns";
 import { useCycles } from "@/src/hooks/useCycles";
 import { useTasks } from "@/src/hooks/useTasks";
 import { useTaskInstances } from "@/src/hooks/useTaskInstance";
-import { calcCycleWeekNumber } from "@/src/hooks/useCurrentWeek";
+import { calcWeekNumberFromDate } from "@/src/hooks/useCurrentWeek";
 import { ReviewView } from "@/src/components/tasks/review/ReviewView";
 import { useUIStore } from "@/src/store/uiStore";
 
@@ -20,7 +20,9 @@ export default function ReviewPage() {
     cycles.find(cycle => cycle.status === "planning") ??
     null;
 
-  const weekNumber = activeCycle ? calcCycleWeekNumber(activeCycle.start_date) : 1;
+  const weekNumber = activeCycle
+    ? calcWeekNumberFromDate(activeCycle.start_date, currentWeekStart)
+    : 1;
 
   // 本週週一的日期
   const weekStart = startOfWeek(currentWeekStart, { weekStartsOn: 1 });

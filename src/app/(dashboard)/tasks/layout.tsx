@@ -15,7 +15,7 @@ import { TaskQuickCreateModal } from "@/src/components/modals/TaskQuickCreateMod
 import { format, isSameWeek } from "date-fns";
 import { useCycles } from "@/src/hooks/useCycles";
 import { useEffect } from "react";
-import { calcCycleWeekNumber } from "@/src/hooks/useCurrentWeek";
+import { calcWeekNumberFromDate } from "@/src/hooks/useCurrentWeek";
 
 export default function TaskLayout({ children }: { children: React.ReactNode }) {
   const { cycles, fetchCycles } = useCycles();
@@ -39,8 +39,12 @@ export default function TaskLayout({ children }: { children: React.ReactNode }) 
   const isTodayView = pathname === "/tasks/today";
   const todayLabel = format(new Date(), "yyyy/MM/dd　(EEE)");
 
+  const isBoardView = pathname === "/tasks/board";
+
   const isReviewView = pathname === "/tasks/review";
-  const weekNumber = activeCycle ? calcCycleWeekNumber(activeCycle.start_date) : 1;
+  const weekNumber = activeCycle
+    ? calcWeekNumberFromDate(activeCycle.start_date, currentWeekStart)
+    : 1;
 
   return (
     <div className="flex flex-col h-full">
@@ -87,11 +91,64 @@ export default function TaskLayout({ children }: { children: React.ReactNode }) 
             <span className="text-sm font-semibold text-zinc-800 mr-1">{todayLabel}</span>
           )}
 
+          {/* 看板 */}
+          {isBoardView && (
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-zinc-500"
+                onClick={() => setCurrentWeekStart(getPrevWeekStart(currentWeekStart))}
+              >
+                <ChevronLeft size={14} />
+              </Button>
+              <span className="text-sm font-semibold text-zinc-800 min-w-32.5 text-center">
+                {formatWeekTitle(currentWeekStart)}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-zinc-500"
+                onClick={() => setCurrentWeekStart(getNextWeekStart(currentWeekStart))}
+              >
+                <ChevronRight size={14} />
+              </Button>
+              {!isCurrentWeek && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs px-2.5 text-zinc-500 ml-1"
+                  onClick={() => setCurrentWeekStart(getThisWeekStart())}
+                >
+                  Today
+                </Button>
+              )}
+            </div>
+          )}
+
           {/* 回顧 */}
           {isReviewView && (
-            <span className="text-sm font-semibold text-zinc-800">
-              W{String(weekNumber).padStart(2, "0")} 回顧
-            </span>
+            <div className="hidden sm:flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-zinc-500"
+                onClick={() => setCurrentWeekStart(getPrevWeekStart(currentWeekStart))}
+              >
+                <ChevronLeft size={14} />
+              </Button>
+              <span className="text-sm font-semibold text-zinc-800 min-w-32 text-center">
+                W{String(weekNumber).padStart(2, "0")} {formatWeekTitle(currentWeekStart)}
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-zinc-500"
+                onClick={() => setCurrentWeekStart(getNextWeekStart(currentWeekStart))}
+              >
+                <ChevronRight size={14} />
+              </Button>
+            </div>
           )}
         </div>
 
@@ -114,9 +171,95 @@ export default function TaskLayout({ children }: { children: React.ReactNode }) 
       {/* 桌機以下: 週導覽 */}
       {isWeekView && (
         <div className="sm:hidden flex items-center justify-center gap-1 py-2 border-b border-zinc-200">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-zinc-500"
+            onClick={() => setCurrentWeekStart(getPrevWeekStart(currentWeekStart))}
+          >
+            <ChevronLeft size={14} />
+          </Button>
           <span className="text-sm font-semibold text-zinc-800 min-w-32.5 text-center">
             {formatWeekTitle(currentWeekStart)}
           </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-zinc-500"
+            onClick={() => setCurrentWeekStart(getNextWeekStart(currentWeekStart))}
+          >
+            <ChevronRight size={14} />
+          </Button>
+          {!isCurrentWeek && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 text-xs px-2.5 text-zinc-500 ml-1"
+              onClick={() => setCurrentWeekStart(getThisWeekStart())}
+            >
+              Today
+            </Button>
+          )}
+        </div>
+      )}
+
+      {/* 桌機以下:看板 */}
+      {isBoardView && (
+        <div className="sm:hidden flex items-center justify-center gap-1 py-2 border-b border-zinc-200">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-zinc-500"
+            onClick={() => setCurrentWeekStart(getPrevWeekStart(currentWeekStart))}
+          >
+            <ChevronLeft size={14} />
+          </Button>
+          <span className="text-sm font-semibold text-zinc-800 min-w-32.5 text-center">
+            {formatWeekTitle(currentWeekStart)}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-zinc-500"
+            onClick={() => setCurrentWeekStart(getNextWeekStart(currentWeekStart))}
+          >
+            <ChevronRight size={14} />
+          </Button>
+          {!isCurrentWeek && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 text-xs px-2.5 text-zinc-500 ml-1"
+              onClick={() => setCurrentWeekStart(getThisWeekStart())}
+            >
+              Today
+            </Button>
+          )}
+        </div>
+      )}
+
+      {/* 桌機以下:回顧 */}
+      {isReviewView && (
+        <div className="sm:hidden flex items-center justify-center gap-1 py-2 border-b border-zinc-20">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-zinc-500"
+            onClick={() => setCurrentWeekStart(getPrevWeekStart(currentWeekStart))}
+          >
+            <ChevronLeft size={14} />
+          </Button>
+          <span className="text-sm font-semibold text-zinc-800 min-w-32 text-center">
+            W{String(weekNumber).padStart(2, "0")} {formatWeekTitle(currentWeekStart)}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-zinc-500"
+            onClick={() => setCurrentWeekStart(getNextWeekStart(currentWeekStart))}
+          >
+            <ChevronRight size={14} />
+          </Button>
         </div>
       )}
 

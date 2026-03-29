@@ -8,8 +8,19 @@ export interface WeekReview {
   cycle_id: string;
   week_number: number;
   content: string;
+  execution: string | null;
+  learning: string | null;
+  reflection: string | null;
+  mood: number | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface SaveReviewInput {
+  execution: string;
+  learning: string;
+  reflection: string;
+  mood: number | null;
 }
 
 export function useWeekReview(cycleId: string, weekNumber: number) {
@@ -44,7 +55,7 @@ export function useWeekReview(cycleId: string, weekNumber: number) {
   }, [fetchReview]);
 
   const saveReview = useCallback(
-    async (content: string): Promise<boolean> => {
+    async (input: SaveReviewInput): Promise<boolean> => {
       if (!user) return false;
       setIsLoading(true);
       try {
@@ -52,7 +63,11 @@ export function useWeekReview(cycleId: string, weekNumber: number) {
           user_id: user.id,
           cycle_id: cycleId,
           week_number: weekNumber,
-          content,
+          content: input.execution,
+          execution: input.execution,
+          learning: input.learning,
+          reflection: input.reflection,
+          mood: input.mood,
           updated_at: new Date().toISOString(),
         };
 
