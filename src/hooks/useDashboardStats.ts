@@ -33,6 +33,7 @@ export function useDashboardStats(
   tasks: Task[],
   taskInstances: TaskInstance[],
   todayDateStr: string,
+  reviewCount: number,
 ): DashboardStats {
   return useMemo(() => {
     if (!activeCycle) {
@@ -44,7 +45,7 @@ export function useDashboardStats(
         activeGoals: 0,
         goalProgressPercent: 0,
         coreTaskCompletionRate: 0,
-        weeklyReviewCount: 0,
+        weeklyReviewCount: reviewCount,
         weekStats: [],
         todayInstances: [],
       };
@@ -132,9 +133,9 @@ export function useDashboardStats(
       activeGoals,
       goalProgressPercent,
       coreTaskCompletionRate,
-      weeklyReviewCount: 0,
+      weeklyReviewCount: reviewCount,
       weekStats,
       todayInstances,
     };
-  }, [activeCycle, goals, tasks, taskInstances, todayDateStr]);
+  }, [activeCycle, goals, tasks, taskInstances, todayDateStr, reviewCount]);
 }
