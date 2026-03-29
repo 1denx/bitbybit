@@ -7,7 +7,6 @@ import { DailyTrendChart } from "./DailyTrendChart";
 import { ReviewForm } from "./ReviewForm";
 import { useWeekReview } from "@/src/hooks/useWeekReview";
 import { useTaskStore } from "@/src/store/taskStore";
-import type { TaskInstance, Task } from "@/src/types";
 
 interface ReviewViewProps {
   cycleId: string;
@@ -24,9 +23,11 @@ export function ReviewView({ cycleId, weekNumber, weekStartDate }: ReviewViewPro
   // 本週結束日(週日)
   const weekEndStr = format(addDays(parseISO(weekStartDate), 6), "yyyy-MM-dd");
 
-  // 週日或之後才開放(週日 = geyDay() === 0)
+  // 過去週、當週開放，未來週鎖定
+  const isFutureWeek = weekEndStr > todayStr;
+  const isCurrentWeek = weekStartDate <= todayStr && todayStr <= weekEndStr;
   const todayDate = new Date();
-  const isLocked = todayStr <= weekEndStr && getDay(todayDate) !== 0;
+  const isLocked = isFutureWeek || (isCurrentWeek && getDay(todayDate) !== 0);
 
   // 本週 instance
   const weekInstances = taskInstances.filter(inst => inst.week_number === weekNumber);
@@ -92,6 +93,8 @@ export function ReviewView({ cycleId, weekNumber, weekStartDate }: ReviewViewPro
         isLocked={isLocked}
         isLoading={isLoading}
         isSaving={isSaving}
+        weekNumber={weekNumber}
+        weekEndDate={weekEndStr}
         onSave={saveReview}
       />
     </div>

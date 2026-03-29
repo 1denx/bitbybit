@@ -4,20 +4,24 @@ import { useEffect } from "react";
 import { useCycles } from "@/src/hooks/useCycles";
 import { useTasks } from "@/src/hooks/useTasks";
 import { useTaskInstances } from "@/src/hooks/useTaskInstance";
-import { calcCycleWeekNumber } from "@/src/hooks/useCurrentWeek";
+import { calcWeekNumberFromDate } from "@/src/hooks/useCurrentWeek";
 import { BoardView } from "@/src/components/tasks/board/BoardView";
+import { useUIStore } from "@/src/store/uiStore";
 
 export default function BoardPage() {
   const { cycles, fetchCycles } = useCycles();
   const { fetchTaskByCycle } = useTasks();
   const { fetchInstancesByWeek } = useTaskInstances();
+  const { currentWeekStart } = useUIStore();
 
   const activeCycle =
     cycles.find(cycle => cycle.status === "active") ??
     cycles.find(cycle => cycle.status === "planning") ??
     null;
 
-  const weekNumber = activeCycle ? calcCycleWeekNumber(activeCycle.start_date) : 1;
+  const weekNumber = activeCycle
+    ? calcWeekNumberFromDate(activeCycle.start_date, currentWeekStart)
+    : 1;
 
   useEffect(() => {
     fetchCycles();

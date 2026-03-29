@@ -1,7 +1,8 @@
 "use client";
 
-import { cn } from "@/src/lib/utils";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from "@/src/lib/supabase/client";
+import { useAuth } from "@/src/hooks/useAuth";
 import { format } from "date-fns";
 import { VisionCard } from "@/src/components/dashboard/VisionCard";
 import { StatsGrid } from "@/src/components/dashboard/StatsGrid";
@@ -18,6 +19,8 @@ import { useDashboardStats } from "@/src/hooks/useDashboardStats";
 import type { Task } from "@/src/types";
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const [reviewCount, setReviewCount] = useState(0);
   const { cycles, fetchCycles } = useCycles();
   const { fetchGoalsByCycle } = useGoals();
   const { fetchTaskByCycle } = useTasks();
@@ -45,13 +48,34 @@ export default function DashboardPage() {
     }
   }, [activeCycle?.id]);
 
+  useEffect(() => {
+    if (!activeCycle || !user) return;
+    const fetchReviewCount = async () => {
+      const supabase = createClient();
+      const { count } = await supabase
+        .from("week_reviews")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("cycle_id", activeCycle.id);
+      setReviewCount(count ?? 0);
+    };
+    fetchReviewCount();
+  }, [activeCycle?.id, user]);
+
   // 建立 taskId
   const taskMap: Record<string, Task> = {};
   tasks.forEach(task => {
     taskMap[task.id] = task;
   });
 
-  const stats = useDashboardStats(activeCycle, goals, tasks, taskInstances, todayDateStr);
+  const stats = useDashboardStats(
+    activeCycle,
+    goals,
+    tasks,
+    taskInstances,
+    todayDateStr,
+    reviewCount,
+  );
 
   if (!activeCycle) {
     return <EmptyDashboard />;
