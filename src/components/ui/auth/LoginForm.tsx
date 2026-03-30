@@ -29,6 +29,9 @@ export function LoginForm({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const TEST_EMAIL = "useacc4demo@gmail.com";
+  const TEST_PASSWORD = "qwe123";
+
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setError("");
@@ -140,6 +143,17 @@ export function LoginForm({
               disabled={isLoading}
             />
           </div>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => {
+              setEmail(TEST_EMAIL);
+              setPassword(TEST_PASSWORD);
+            }}
+            className="w-full border border-zinc-200 hover:bg-zinc-200"
+          >
+            點擊填入測試帳號
+          </Button>
           <Button
             type="submit"
             className="w-full bg-foreground text-background"
