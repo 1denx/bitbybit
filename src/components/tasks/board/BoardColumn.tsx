@@ -15,6 +15,7 @@ interface BoardColumnProps {
   type: ColumnType;
   items: BoardColumnItem[];
   onToggleComplete?: (instanceId: string) => void;
+  onMoveToNextWeek?: (instance: TaskInstance) => void;
 }
 
 const COLUMN_CONFIG: Record<
@@ -47,7 +48,7 @@ const COLUMN_CONFIG: Record<
   },
 };
 
-export function BoardColumn({ type, items, onToggleComplete }: BoardColumnProps) {
+export function BoardColumn({ type, items, onToggleComplete, onMoveToNextWeek }: BoardColumnProps) {
   const config = COLUMN_CONFIG[type];
 
   return (
@@ -87,6 +88,7 @@ export function BoardColumn({ type, items, onToggleComplete }: BoardColumnProps)
                 type === "expired" ? "expired" : type === "completed" ? "completed" : "default"
               }
               onToggleComplete={onToggleComplete}
+              onMoveToNextWeek={type === "expired" ? onMoveToNextWeek : undefined}
             />
           ))
         )}

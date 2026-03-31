@@ -1,11 +1,15 @@
 "use client";
 
 import { useMemo } from "react";
-import { format, parseISO, isBefore, startOfDay } from "date-fns";
+import { format, startOfDay, addWeeks, startOfWeek } from "date-fns";
 import { BoardColumn } from "./BoardColumn";
 import { useTaskInstances } from "@/src/hooks/useTaskInstance";
+import { calcWeekNumberFromDate } from "@/src/hooks/useCurrentWeek";
+import { useUIStore } from "@/src/store/uiStore";
+import { useCycleStore } from "@/src/store/cycleStore";
 import { useTaskStore } from "@/src/store/taskStore";
 import type { Task, TaskInstance } from "@/src/types";
+import { toast } from "sonner";
 
 interface BoardViewProps {
   cycleId: string;
@@ -15,6 +19,9 @@ interface BoardViewProps {
 export function BoardView({ cycleId, weekNumber }: BoardViewProps) {
   const { tasks, taskInstances } = useTaskStore();
   const { completeInstance, uncompleteInstance } = useTaskInstances();
+  const { moveInstanceToNextWeek } = useTaskInstances();
+  const { currentWeekStart } = useUIStore();
+  const { activeCycle } = useCycleStore();
 
   const today = startOfDay(new Date());
   const todayStr = format(today, "yyyy-MM-dd");
@@ -95,6 +102,29 @@ export function BoardView({ cycleId, weekNumber }: BoardViewProps) {
     }
   };
 
+  const handleMoveToNextWeek = async (instance: TaskInstance) => {
+    if (!activeCycle) return;
+
+    // 下週一
+    const nextWeekStart = addWeeks(startOfWeek(currentWeekStart, { weekStartsOn: 1 }), 1);
+
+    // 下週同天，如過超出週期就用下週一
+    const originalDate = instance.scheduled_date
+      ? new Date(instance.scheduled_date)
+      : nextWeekStart;
+    const nextDate = addWeeks(originalDate, 1);
+    const nextDateStr = format(nextDate, "yyyy-MM-dd");
+
+    const nextWeekNumber = calcWeekNumberFromDate(activeCycle.start_date, nextWeekStart);
+
+    // 不能超過 W12
+    if (nextWeekNumber > 12) {
+      toast.error("已經是最後一週，無法移到下週");
+      return;
+    }
+    await moveInstanceToNextWeek(instance.id, nextWeekNumber, nextDateStr);
+  };
+
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-4 h-full overflow-hidden p-4 gap-4">
       <BoardColumn
@@ -102,7 +132,12 @@ export function BoardView({ cycleId, weekNumber }: BoardViewProps) {
         items={unscheduledItems}
         onToggleComplete={handleToggleComplete}
       />
-      <BoardColumn type="expired" items={expiredItems} onToggleComplete={handleToggleComplete} />
+      <BoardColumn
+        type="expired"
+        items={expiredItems}
+        onToggleComplete={handleToggleComplete}
+        onMoveToNextWeek={handleMoveToNextWeek}
+      />
       <BoardColumn
         type="in_progress"
         items={inProgressItems}

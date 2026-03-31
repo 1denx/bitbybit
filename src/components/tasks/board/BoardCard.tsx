@@ -6,15 +6,23 @@ import { formatTimeStr } from "@/src/lib/utils/calendar";
 import { format, parseISO } from "date-fns";
 import { TriangleAlert } from "lucide-react";
 import type { Task, TaskInstance } from "@/src/types";
+import { Button } from "../../ui/button";
 
 interface BoardCardProps {
   task: Task;
   instance?: TaskInstance;
   variant?: "default" | "expired" | "completed";
   onToggleComplete?: (instanceId: string) => void;
+  onMoveToNextWeek?: (instance: TaskInstance) => void;
 }
 
-export function BoardCard({ task, instance, variant, onToggleComplete }: BoardCardProps) {
+export function BoardCard({
+  task,
+  instance,
+  variant,
+  onToggleComplete,
+  onMoveToNextWeek,
+}: BoardCardProps) {
   const priorityConfig = PRIORITY_CONFIG[task.priority];
   const isCompleted = variant === "completed";
   const isExpired = variant === "expired";
@@ -102,6 +110,19 @@ export function BoardCard({ task, instance, variant, onToggleComplete }: BoardCa
                 </span>
               )}
             </div>
+          )}
+
+          {/* 過期時顯示移至下週按鈕 */}
+          {isExpired && instance && onMoveToNextWeek && (
+            <Button
+              type="button"
+              size="xs"
+              variant="outline"
+              onClick={() => onMoveToNextWeek(instance)}
+              className="mt-2 w-full"
+            >
+              移到下週
+            </Button>
           )}
         </div>
       </div>
