@@ -115,7 +115,7 @@ export function WeekView({ weekDays, cycleId, weekNumber }: WeekViewProps) {
 
   const handleDragMove = useCallback((event: DragEndEvent) => {
     // 持續更新滑鼠 Y 座標
-    const nativeEvent = event.activatorEvent as MouseEvent;
+    const nativeEvent = event.activatorEvent as PointerEvent;
     // activatorEvent 是起點，用 delta 推算當前位置
     lastMouseYRef.current = nativeEvent.clientY + event.delta.y;
   }, []);
@@ -142,7 +142,7 @@ export function WeekView({ weekDays, cycleId, weekNumber }: WeekViewProps) {
 
       // 計算落點時間
       // 用 activatorEvent.clientY + delta.y 算出放開時的實際 Y
-      const activatorY = (event.activatorEvent as MouseEvent).clientY;
+      const activatorY = (event.activatorEvent as PointerEvent).clientY;
       const currentMouseY = activatorY + event.delta.y;
 
       const droppedColumn = document.querySelector(
