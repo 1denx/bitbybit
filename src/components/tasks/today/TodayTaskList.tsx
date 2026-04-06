@@ -1,7 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
-import { zhTW } from "date-fns/locale";
 import { TodayTaskItem } from "./TodayTaskItem";
 import type { Task, TaskInstance } from "@/src/types";
 
@@ -25,7 +23,7 @@ export function TodayTaskList({ todayInstances, taskMap, onToggleComplete }: Tod
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b border-zinc-200">
-        <div className="text-sm font-semibold text-zinc-600">今日待執行</div>
+        <div className="text-sm font-semibold text-zinc-700">今日待執行</div>
 
         {/* 完成進度條 */}
         {todayInstances.length > 0 && (

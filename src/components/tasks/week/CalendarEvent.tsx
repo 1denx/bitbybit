@@ -82,6 +82,7 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
     useTaskInstances();
   const [isHovered, setIsHovered] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const isResizingRef = useRef(false);
 
   // resize 過程中的預覽時間（未送出 DB 前先 local 顯示）
   const [previewEndTime, setPreviewEndTime] = useState<string | null>(null);
@@ -118,16 +119,18 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
   });
 
   // Resize
-  const handleResizeMouseDown = useCallback(
-    (e: React.MouseEvent) => {
+  const handleResizePointerDown = useCallback(
+    (e: React.PointerEvent) => {
       e.stopPropagation();
       e.preventDefault();
 
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      isResizingRef.current = true;
       setIsResizing(true);
       resizeStartYRef.current = e.clientY;
       resizeStartEndTimeRef.current = instance.scheduled_end_time ?? "10:00";
 
-      const handleMouseMove = (moveEvent: MouseEvent) => {
+      const handlePointerMove = (moveEvent: PointerEvent) => {
         const deltaY = moveEvent.clientY - resizeStartYRef.current;
         const deltaSlots = Math.round(deltaY / SLOT_HEIGHT);
         const deltaMinutes = deltaSlots * 30;
@@ -148,10 +151,10 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
         setPreviewEndTime(newEndTimeStr);
       };
 
-      const handleMouseUp = async () => {
+      const handlePointerUp = async () => {
         setIsResizing(false);
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
+        document.removeEventListener("pointermove", handlePointerMove);
+        document.removeEventListener("pointerup", handlePointerUp);
 
         // 取得最終的預覽時間並送出 DB
         setPreviewEndTime(finalEndTime => {
@@ -165,9 +168,13 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
           }
           return null; // 清除預覽，之後由 store 的 instance 資料顯示
         });
+
+        setTimeout(() => {
+          isResizingRef.current = false;
+        }, 50);
       };
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("pointermove", handlePointerMove);
+      document.addEventListener("pointerup", handlePointerUp);
     },
     [instance, startTime, rescheduleInstance],
   );
@@ -207,7 +214,7 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
         borderLeftWidth: "3px",
         borderLeftColor: getBorderColor(task.priority),
       }}
-      onClick={() => !isResizing && onClick(instance)}
+      onClick={() => !isResizingRef.current && onClick(instance)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -264,7 +271,7 @@ export function CalendarEvent({ instance, task, onClick }: CalendarEventProps) {
           {/* Resize Handle */}
           {!isCompleted && (
             <div
-              onMouseDown={handleResizeMouseDown}
+              onPointerDown={handleResizePointerDown}
               className={cn(
                 "absolute bottom-0 left-0 right-0 h-2 rounded-b-md",
                 "flex items-center justify-center cursor-ns-resize transition-opacity",

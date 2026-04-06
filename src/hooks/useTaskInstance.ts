@@ -5,6 +5,7 @@ import { useAuth } from "./useAuth";
 import { format } from "date-fns";
 import type { TaskInstance, InstanceStatus } from "../types";
 import { ta, tr } from "date-fns/locale";
+import { toast } from "sonner";
 
 export interface ScheduleInstanceInput {
   instanceId: string;
@@ -22,7 +23,6 @@ export function useTaskInstances() {
     async (cycleId: string) => {
       if (!user) return;
       try {
-        const supabase = createClient();
         const { data, error } = await supabase
           .from("task_instances")
           .select("*")
@@ -226,6 +226,34 @@ export function useTaskInstances() {
     return taskInstances.filter(instance => instance.status === "expired");
   };
 
+  const moveInstanceToNextWeek = async (
+    instanceId: string,
+    nextWeekNumber: number,
+    nextWeekDateStr: string,
+  ): Promise<boolean> => {
+    try {
+      const { data, error } = await supabase
+        .from("task_instances")
+        .update({
+          week_number: nextWeekNumber,
+          scheduled_date: nextWeekDateStr,
+          status: "scheduled",
+        })
+        .eq("id", instanceId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      updateInstance(instanceId, data as TaskInstance);
+      toast.success("已移到下週");
+      return true;
+    } catch (error) {
+      console.error("moveInstanceToNextWeek ERROR:", error);
+      toast.error("操作失敗");
+      return false;
+    }
+  };
+
   return {
     taskInstances,
     fetchAllInstancesByCycle,
@@ -239,5 +267,6 @@ export function useTaskInstances() {
     getInstancesByDate,
     getUnscheduledInstances,
     getExpiredInstances,
+    moveInstanceToNextWeek,
   };
 }
