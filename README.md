@@ -10,8 +10,6 @@
   </p>
 </div>
 
-## Installation
-
 BitByBit is a 12-week goal tracking system that turns vague ambitions into actionable roadmaps.
 
 Based on the "12-Week Year" methodology, Break down big goals into executable daily tasks using a 12-week cycle framework. Drag-and-drop scheduling, progress tracking, and weekly reviews build a continuous improvement loop.
