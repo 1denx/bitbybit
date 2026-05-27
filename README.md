@@ -4,17 +4,16 @@
     <a href="https://bitbybit-plan.vercel.app/"><b>Website</b></a> ｜
     <a href="#features"><b>Features</b></a> ｜
     <a href="#tech-stack"><b>Tech Stack</b></a> ｜
-    <a href="#page-flow"><b>Page Flow</b></a> ｜
-    <a href="#state-management"><b>State Management</b></a> ｜
     <a href="#demo"><b>Demo</b></a>
+  </p>
+  <p>
+    English｜<a href="./README.zh-TW.md">繁體中文</a>
   </p>
 </div>
 
-## Installation
-
 BitByBit is a 12-week goal tracking system that turns vague ambitions into actionable roadmaps.
 
-Based on the "12-Week Year" methodology, Break down big goals into executable daily tasks using a 12-week cycle framework. Drag-and-drop scheduling, progress tracking, and weekly reviews build a continuous improvement loop.
+Based on the "12-Week Year" methodology, it breaks down big goals into executable daily tasks using a 12-week cycle framework. Drag-and-drop scheduling, progress tracking, and weekly reviews build a continuous improvement loop.
 
 ![Responsive devices](public/readme/responsive_devices.png)
 
@@ -24,9 +23,9 @@ Based on the "12-Week Year" methodology, Break down big goals into executable da
 
 - Strategic Task Hierarchy: Organize goals with nested task structures and Eisenhower Matrix prioritization (Urgent vs. Important).
 
-- Interactive Weekly Planner: Seamlessly schedule tasks via drag-and-drop calendar, optimized for both desktop and mobile.
+- Interactive Weekly Planner: Drag-and-drop scheduling via @dnd-kit with Pointer Events for precise drop positioning. Mobile uses tap + Offcanvas with shared business logic across both experiences.
 
-- Analytics & Reflection: Monitor growth with real-time dashboards and structured weekly reviews to track execution and mood.
+- Analytics & Reflection: Real-time dashboard showing completion rate, total tasks, and review streaks. Weekly review unlocks on Sunday with back-fill support for past weeks; mood rating and reflection fields structured for pattern recognition.
 
 - Smart Sync & Alerts: Stay consistent with automated task notifications and secure Google OAuth integration.
 
@@ -48,6 +47,7 @@ Based on the "12-Week Year" methodology, Break down big goals into executable da
 graph TD
     A[Landing Page] -->|Public| B{Auth Gate}
     B -->|Not logged in| C[ /auth ]
+    B -->|Already logged in| E[ /dashboard ]
     C -->|Login / Google OAuth| D[Supabase Auth]
     D -->|Auth State Change| E[ /dashboard ]
 
@@ -89,7 +89,7 @@ graph LR
 
     subgraph Zustand_Stores ["Zustand (State Management)"]
         direction TB
-        S1["authStore / Context<br/>(profileName, user)"]
+        S1["AuthContext (React Context)<br/>(user, profileName)"]
         S2["cycleStore<br/>(cycles list)"]
         S3["goalStore<br/>(goals list)"]
         S4["taskStore<br/>(tasks, taskInstances list)"]
@@ -108,8 +108,78 @@ graph LR
     UI -->|Dispatch Actions| S1 & S2 & S3 & S4 & S5
 ```
 
-- **React Context (AuthContext)：** Auth state is pushed by Supabase onAuthStateChange — no manual actions needed, making Context the right fit.
-- **Zustand Store：** All other data states require manual updates; uiStore.currentWeekStart ensures week/board/review pages stay in sync across navigation.
+- **React Context (AuthContext)：** Auth state is driven by Supabase `onAuthStateChange` — reactive and push-based, so React Context is the natural fit with no manual dispatch needed.
+- **Zustand Stores：** All other data requires explicit mutation after Supabase CRUD calls. Stores are thin slices (state + setters only, no async logic) — all Supabase calls live in hooks, which push results into stores after mutation.
+- **uiStore.currentWeekStart：** Single source of truth shared across week / board / review views, keeping navigation in sync regardless of which tab is active.
+
+## Database Schema
+
+Core data model follows a strict hierarchy: **Cycle → Goal → Task → TaskInstance**
+
+```mermaid
+erDiagram
+    Cycle ||--o{ Goal : has
+    Goal ||--o{ Task : has
+    Task ||--o{ TaskInstance : generates
+
+    Cycle {
+        uuid id PK
+        string name
+        string vision
+        date start_date
+        string status
+    }
+    Goal {
+        uuid id PK
+        uuid cycle_id FK
+        string title
+        string priority
+    }
+    Task {
+        uuid id PK
+        uuid goal_id FK
+        string category
+        string priority
+        int[] scheduled_weeks
+        int frequency
+    }
+    TaskInstance {
+        uuid id PK
+        uuid task_id FK
+        date scheduled_date
+        time start_time
+        time end_time
+        string status
+    }
+```
+
+| Entity           | Key Fields                                                                                   | Notes                                          |
+| ---------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| **Cycle**        | `status: planning → active → completed`                                                      | One active cycle at a time; 12 weeks / 83 days |
+| **Goal**         | `priority: main \| sub`                                                                      | Belongs to one cycle                           |
+| **Task**         | `category: core \| extra`, `priority` (4-quadrant), `scheduled_weeks: number[]`, `frequency` | Defines recurrence rules; no concrete dates    |
+| **TaskInstance** | `status: unscheduled → scheduled → completed \| expired`, `scheduled_date`, time range       | Concrete scheduled unit generated from a Task  |
+
+## Quick Start
+
+```bash
+git clone https://github.com/1denx/bitbybit.git
+cd bitbybit
+npm install
+```
+
+Create a `.env.local` file in the project root:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Demo
 
