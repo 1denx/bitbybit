@@ -26,6 +26,8 @@ export default function GoalsPage() {
     cycles.find(cycle => cycle.status === "planning") ??
     null;
 
+  const isGoalLimitReached = goals.length >= 3;
+
   useEffect(() => {
     fetchCycles();
   }, [fetchCycles]);
@@ -68,10 +70,18 @@ export default function GoalsPage() {
           </p>
         </div>
         {activeCycle && (
-          <Button onClick={() => setGoalModalOpen(true)} className="flex items-center">
-            <Plus size={14} className="lg:mr-1" />
-            <span className="hidden lg:block">新增目標</span>
-          </Button>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-zinc-400">目標設定：{goals.length}/3</span>
+            <Button
+              onClick={() => setGoalModalOpen(true)}
+              className="flex items-center"
+              disabled={isGoalLimitReached}
+              title={isGoalLimitReached ? "已達目標上限 (3/3)" : undefined}
+            >
+              <Plus size={14} className="lg:mr-1" />
+              <span className="hidden lg:block">新增目標</span>
+            </Button>
+          </div>
         )}
       </div>
 
