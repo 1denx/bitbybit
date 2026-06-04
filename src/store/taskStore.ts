@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { Task, TaskInstance } from "../types";
+import { state } from "happy-dom/lib/PropertySymbol";
 
 interface TaskStore {
   tasks: Task[];
@@ -14,6 +15,8 @@ interface TaskStore {
   updateTask: (id: string, updates: Partial<Task>) => void;
   removeTask: (id: string) => void;
   updateInstance: (id: string, updates: Partial<TaskInstance>) => void;
+  addInstance: (instance: TaskInstance) => void;
+  removeInstance: (id: string) => void;
 }
 
 export const useTaskStore = create<TaskStore>(set => ({
@@ -40,4 +43,9 @@ export const useTaskStore = create<TaskStore>(set => ({
         instance.id === id ? { ...instance, ...updates } : instance,
       ),
     })),
+
+  addInstance: instance => set(state => ({ taskInstances: [...state.taskInstances, instance] })),
+
+  removeInstance: id =>
+    set(state => ({ taskInstances: state.taskInstances.filter(inst => inst.id !== id) })),
 }));

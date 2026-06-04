@@ -17,7 +17,8 @@ export interface ScheduleInstanceInput {
 export function useTaskInstances() {
   const supabase = createClient();
   const { user } = useAuth();
-  const { taskInstances, setTaskInstances, updateInstance } = useTaskStore();
+  const { taskInstances, setTaskInstances, updateInstance, addInstance, removeInstance } =
+    useTaskStore();
 
   const fetchAllInstancesByCycle = useCallback(
     async (cycleId: string) => {
@@ -114,9 +115,7 @@ export function useTaskInstances() {
       if (error) throw error;
       const newInstance = data as TaskInstance;
 
-      useTaskStore
-        .getState()
-        .setTaskInstances([...useTaskStore.getState().taskInstances, newInstance]);
+      addInstance(newInstance);
       return newInstance;
     } catch (error) {
       console.error("createInstance ERROR:", error);
@@ -195,8 +194,7 @@ export function useTaskInstances() {
   // 刪除 Instance
   const deleteInstance = async (instanceId: string): Promise<boolean> => {
     try {
-      const current = useTaskStore.getState().taskInstances;
-      const toDelete = current.find(instance => instance.id === instanceId);
+      const toDelete = taskInstances.find(instance => instance.id === instanceId);
 
       const { error } = await supabase.from("task_instances").delete().eq("id", instanceId);
       if (error) throw error;
@@ -204,7 +202,7 @@ export function useTaskInstances() {
       let expiredOriginalId: string | null = null;
       if (toDelete?.scheduled_date) {
         const originalDate = format(subWeeks(new Date(toDelete.scheduled_date), 1), "yyyy-MM-dd");
-        const expiredOriginal = current.find(
+        const expiredOriginal = taskInstances.find(
           instance =>
             instance.task_id === toDelete.task_id &&
             instance.scheduled_date === originalDate &&
@@ -217,14 +215,8 @@ export function useTaskInstances() {
         }
       }
 
-      useTaskStore
-        .getState()
-        .setTaskInstances(
-          current.filter(
-            instance => instance.id !== instanceId && instance.id !== expiredOriginalId,
-          ),
-        );
-
+      removeInstance(instanceId);
+      if (expiredOriginalId) removeInstance(expiredOriginalId);
       return true;
     } catch (error) {
       console.error("deleteInstance ERROR:", error);
@@ -292,13 +284,8 @@ export function useTaskInstances() {
 
       if (insertError) throw insertError;
 
-      const currentInstances = useTaskStore.getState().taskInstances;
-      useTaskStore
-        .getState()
-        .setTaskInstances([
-          ...currentInstances.filter(instance => instance.id !== instanceId),
-          newInstance as TaskInstance,
-        ]);
+      removeInstance(instanceId);
+      addInstance(newInstance as TaskInstance);
 
       toast.success("已移到下週");
       return true;
