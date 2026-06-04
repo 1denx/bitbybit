@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { createClient } from "../lib/supabase/client";
 import { useTaskStore } from "../store/taskStore";
 import { useAuth } from "./useAuth";
-import { format } from "date-fns";
+import { format, subWeeks } from "date-fns";
 import type { TaskInstance, InstanceStatus } from "../types";
 import { ta, tr } from "date-fns/locale";
 import { toast } from "sonner";
@@ -195,14 +195,36 @@ export function useTaskInstances() {
   // 刪除 Instance
   const deleteInstance = async (instanceId: string): Promise<boolean> => {
     try {
-      const { data, error } = await supabase.from("task_instances").delete().eq("id", instanceId);
+      const current = useTaskStore.getState().taskInstances;
+      const toDelete = current.find(instance => instance.id === instanceId);
 
+      const { error } = await supabase.from("task_instances").delete().eq("id", instanceId);
       if (error) throw error;
+
+      let expiredOriginalId: string | null = null;
+      if (toDelete?.scheduled_date) {
+        const originalDate = format(subWeeks(new Date(toDelete.scheduled_date), 1), "yyyy-MM-dd");
+        const expiredOriginal = current.find(
+          instance =>
+            instance.task_id === toDelete.task_id &&
+            instance.scheduled_date === originalDate &&
+            instance.status === "expired" &&
+            instance.week_number === toDelete.week_number - 1,
+        );
+        if (expiredOriginal) {
+          await supabase.from("task_instances").delete().eq("id", expiredOriginal.id);
+          expiredOriginalId = expiredOriginal.id;
+        }
+      }
+
       useTaskStore
         .getState()
         .setTaskInstances(
-          useTaskStore.getState().taskInstances.filter(instance => instance.id !== instanceId),
+          current.filter(
+            instance => instance.id !== instanceId && instance.id !== expiredOriginalId,
+          ),
         );
+
       return true;
     } catch (error) {
       console.error("deleteInstance ERROR:", error);
@@ -232,19 +254,52 @@ export function useTaskInstances() {
     nextWeekDateStr: string,
   ): Promise<boolean> => {
     try {
-      const { data, error } = await supabase
+      const original = taskInstances.find(instance => instance.id === instanceId);
+      if (!original) throw new Error("Instance no found");
+
+      const alreadyMoved = taskInstances.some(
+        instance =>
+          instance.task_id === original.task_id &&
+          instance.week_number === nextWeekNumber &&
+          instance.status === "scheduled",
+      );
+      if (alreadyMoved) {
+        toast.info("此任務已移到下週");
+        return true;
+      }
+
+      const { error: expireError } = await supabase
         .from("task_instances")
         .update({
+          status: "expired",
+        })
+        .eq("id", instanceId);
+      if (expireError) throw expireError;
+
+      const { id: _id, created_at: _ca, updated_at: _ua, ...rest } = original;
+      const { data: newInstance, error: insertError } = await supabase
+        .from("task_instances")
+        .insert({
+          ...rest,
           week_number: nextWeekNumber,
           scheduled_date: nextWeekDateStr,
           status: "scheduled",
+          is_expired_auto: false,
+          completed_at: null,
         })
-        .eq("id", instanceId)
         .select()
         .single();
 
-      if (error) throw error;
-      updateInstance(instanceId, data as TaskInstance);
+      if (insertError) throw insertError;
+
+      const currentInstances = useTaskStore.getState().taskInstances;
+      useTaskStore
+        .getState()
+        .setTaskInstances([
+          ...currentInstances.filter(instance => instance.id !== instanceId),
+          newInstance as TaskInstance,
+        ]);
+
       toast.success("已移到下週");
       return true;
     } catch (error) {

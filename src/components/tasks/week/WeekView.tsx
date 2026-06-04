@@ -55,6 +55,7 @@ function getBorderColor(priority: string): string {
 
 export function WeekView({ weekDays, cycleId, weekNumber }: WeekViewProps) {
   const { tasks, taskInstances } = useTaskStore();
+  const weekInstances = taskInstances.filter(inst => inst.week_number === weekNumber);
   const { createInstance, rescheduleInstance, completeInstance, uncompleteInstance } =
     useTaskInstances();
   const { offcanvasOpen, selectInstanceId, openOffcanvas, closeOffcanvas } = useUIStore();
@@ -265,7 +266,7 @@ export function WeekView({ weekDays, cycleId, weekNumber }: WeekViewProps) {
         >
           <WeekTaskList
             tasks={tasks}
-            taskInstances={taskInstances}
+            taskInstances={weekInstances}
             weekNumber={weekNumber}
             onToggleComplete={handleToggleComplete}
             onTaskClick={isMobile ? handleTaskClickMobile : undefined}

@@ -12,7 +12,7 @@ import { getWeekDays } from "@/src/lib/utils/calendar";
 export default function WeekPage() {
   const { cycles, fetchCycles } = useCycles();
   const { fetchTaskByCycle } = useTasks();
-  const { fetchInstancesByWeek } = useTaskInstances();
+  const { fetchAllInstancesByCycle } = useTaskInstances();
   const { currentWeekStart } = useUIStore();
 
   const activeCycle =
@@ -33,9 +33,9 @@ export default function WeekPage() {
   useEffect(() => {
     if (activeCycle) {
       fetchTaskByCycle(activeCycle.id);
-      fetchInstancesByWeek(activeCycle.id, weekNumber);
+      fetchAllInstancesByCycle(activeCycle.id);
     }
-  }, [activeCycle?.id, weekNumber]);
+  }, [activeCycle?.id]);
 
   if (!activeCycle) {
     return (
