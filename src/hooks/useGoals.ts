@@ -50,6 +50,12 @@ export function useGoals() {
   // 新增目標
   const createGoal = async (input: CreateGoalInput): Promise<Goal | null> => {
     if (!user) return null;
+
+    if (goals.length >= 3) {
+      toast.error("每個週期最多只能新增 3 個目標");
+      return null;
+    }
+
     try {
       const payload = {
         user_id: user.id,

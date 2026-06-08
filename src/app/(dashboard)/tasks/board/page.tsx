@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCycles } from "@/src/hooks/useCycles";
 import { useTasks } from "@/src/hooks/useTasks";
 import { useTaskInstances } from "@/src/hooks/useTaskInstance";
@@ -11,8 +11,9 @@ import { useUIStore } from "@/src/store/uiStore";
 export default function BoardPage() {
   const { cycles, fetchCycles } = useCycles();
   const { fetchTaskByCycle } = useTasks();
-  const { fetchInstancesByWeek } = useTaskInstances();
+  const { fetchAllInstancesByCycle } = useTaskInstances();
   const { currentWeekStart } = useUIStore();
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const activeCycle =
     cycles.find(cycle => cycle.status === "active") ??
@@ -29,10 +30,13 @@ export default function BoardPage() {
 
   useEffect(() => {
     if (activeCycle) {
-      fetchTaskByCycle(activeCycle.id);
-      fetchInstancesByWeek(activeCycle.id, weekNumber);
+      setIsLoaded(false);
+      Promise.all([
+        fetchTaskByCycle(activeCycle.id),
+        fetchAllInstancesByCycle(activeCycle.id),
+      ]).then(() => setIsLoaded(true));
     }
-  }, [activeCycle?.id, weekNumber]);
+  }, [activeCycle?.id]);
 
   if (!activeCycle) {
     return (
@@ -41,6 +45,14 @@ export default function BoardPage() {
           <p className="text-sm">尚無進行中的週期</p>
           <p className="text-xs mt-1">請先至週期管理建立並開始執行</p>
         </div>
+      </div>
+    );
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center h-full text-zinc-400">
+        <p className="text-sm">載入中...</p>
       </div>
     );
   }

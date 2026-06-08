@@ -7,6 +7,7 @@ import { CycleCard } from "@/src/components/cycles/CycleCard";
 import { CycleModal } from "@/src/components/modals/CycleModal";
 import { useCycles } from "@/src/hooks/useCycles";
 import type { Cycle } from "@/src/types";
+import { cy } from "date-fns/locale";
 
 export default function CyclesPage() {
   const { cycles, isLoading, fetchCycles } = useCycles();
@@ -14,6 +15,7 @@ export default function CyclesPage() {
   const [editTarget, setEditTarget] = useState<Cycle | null>(null);
 
   const goalCountMap: Record<string, number> = {};
+  const hasActiveOrPlanningCycle = cycles.some(cycle => cycle.status !== "completed");
 
   useEffect(() => {
     fetchCycles();
@@ -36,7 +38,12 @@ export default function CyclesPage() {
         <div>
           <h1 className="text-xl font-semibold text-zinc-900">週期管理</h1>
         </div>
-        <Button onClick={() => setModalOpen(true)} className="flex items-center">
+        <Button
+          onClick={() => setModalOpen(true)}
+          className="flex items-center"
+          disabled={hasActiveOrPlanningCycle}
+          title={hasActiveOrPlanningCycle ? "請先完成或刪除目前的週期" : undefined}
+        >
           <Plus size={14} className="sm:mr-1" />
           <span className="hidden sm:block">新增週期</span>
         </Button>

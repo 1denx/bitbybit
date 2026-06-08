@@ -1,8 +1,9 @@
 "use client";
 
+import { format, addWeeks } from "date-fns";
 import { WeekTaskCard } from "./WeekTaskCard";
 import { ExpiredTasksBar } from "./ExpiredTasksBar";
-import { useTaskInstances } from "@/src/hooks/useTaskInstance";
+import { useTaskStore } from "@/src/store/taskStore";
 import type { Task, TaskInstance } from "@/src/types";
 
 interface WeekTaskListProps {
@@ -29,7 +30,8 @@ export function WeekTaskList({
   onTaskClick,
   onUnscheduledTaskClick,
 }: WeekTaskListProps) {
-  const { getExpiredInstances } = useTaskInstances();
+  const { taskInstances: allInstances } = useTaskStore();
+  const todayStr = format(new Date(), "yyyy-MM-dd");
 
   // 本週應執行的任務
   const thisWeekTasks = tasks.filter(task => task.scheduled_weeks.includes(weekNumber));
@@ -45,7 +47,26 @@ export function WeekTaskList({
     }
   });
 
-  const expiredInstances = getExpiredInstances();
+  const expiredInstances = allInstances
+    .filter(inst => {
+      if (inst.week_number !== weekNumber) return false;
+      if (inst.status === "expired") return true;
+      if (inst.status === "scheduled" && inst.scheduled_date && inst.scheduled_date < todayStr)
+        return true;
+      return false;
+    })
+    .filter(inst => {
+      if (inst.status !== "expired") return true;
+      if (!inst.scheduled_date) return true;
+      const movedDate = format(addWeeks(new Date(inst.scheduled_date), 1), "yyyy-MM-dd");
+      return !allInstances.some(
+        other =>
+          other.task_id === inst.task_id &&
+          other.scheduled_date === movedDate &&
+          other.week_number > weekNumber &&
+          other.status === "scheduled",
+      );
+    });
 
   return (
     <div className="flex flex-col h-full">

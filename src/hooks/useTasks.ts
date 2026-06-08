@@ -46,12 +46,13 @@ export function useTasks() {
         if (error) throw error;
 
         const newTasks = data ?? ([] as Task[]);
-        setTasks([...tasks.filter(existingTask => existingTask.goal_id !== goalId), ...newTasks]);
+        const current = useTaskStore.getState().tasks;
+        setTasks([...current.filter(existingTask => existingTask.goal_id !== goalId), ...newTasks]);
       } catch (error) {
         console.error("fetchTaskByGoal ERROR:", error);
       }
     },
-    [user, tasks],
+    [user],
   );
 
   // 取得指定週期的所有任務
@@ -75,7 +76,7 @@ export function useTasks() {
         setIsLoading(false);
       }
     },
-    [user, tasks],
+    [user],
   );
 
   // 新增任務

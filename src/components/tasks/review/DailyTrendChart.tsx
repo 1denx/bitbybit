@@ -35,7 +35,7 @@ export function DailyTrendChart({
       inst => inst.scheduled_date === dateStr && coreTaskIds.has(inst.task_id),
     );
 
-    const total = dayInstances.filter(inst => inst.status !== "expired").length;
+    const total = dayInstances.length;
 
     const completed = dayInstances.filter(inst => inst.status === "completed").length;
 

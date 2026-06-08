@@ -5,6 +5,7 @@ interface ReviewStats {
   completedCount: number;
   pendingCount: number;
   coreCompletionRate: number;
+  expiredCount: number;
   totalCore: number;
   totalExtra: number;
   completedCore: number;
@@ -38,7 +39,7 @@ export function ReviewStatsGrid({ stats }: ReviewStatsGridProps) {
       value: stats.pendingCount,
       suffix: "",
       color: "text-rose-600",
-      sub: `核心 ${stats.pendingCore}　額外 ${stats.pendingExtra}`,
+      sub: `核心 ${stats.pendingCore}　額外 ${stats.pendingExtra}　${stats.expiredCount > 0 ? `含 ${stats.expiredCount} 個過期` : ""}`,
     },
     {
       label: "本週達成率",

@@ -81,7 +81,10 @@ export function useDashboardStats(
       const coreInstances = weekInstances.filter(instance => coreTaskIds.has(instance.task_id));
 
       const scheduledCount = coreInstances.filter(
-        instance => instance.status === "scheduled" || instance.status === "completed",
+        instance =>
+          instance.status === "scheduled" ||
+          instance.status === "completed" ||
+          instance.status === "expired",
       ).length;
 
       const completedCount = coreInstances.filter(

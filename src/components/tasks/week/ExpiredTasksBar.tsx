@@ -24,8 +24,8 @@ export function ExpiredTasksBar({ expiredInstances }: ExpiredTasksBarProps) {
       <p className="text-[10px] text-amber-600 mb-2">有任務未完成，請前往看板處理</p>
       <button
         type="button"
-        onClick={() => router.push("/task/board")}
-        className="text-[10px] bg-amber-600 text-white rounded px-2.5 py-1 hover:bg-amber-700 transition-colors"
+        onClick={() => router.push("/tasks/board")}
+        className="text-[10px] bg-amber-600 text-white rounded px-2.5 py-1 hover:bg-amber-700 transition-colors cursor-pointer"
       >
         前往看板
       </button>

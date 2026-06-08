@@ -57,6 +57,18 @@ export function BoardView({ cycleId, weekNumber }: BoardViewProps) {
         return true;
       return false;
     })
+    .filter(inst => {
+      if (inst.status !== "expired") return true;
+      if (!inst.scheduled_date) return true;
+      const movedDate = format(addWeeks(new Date(inst.scheduled_date), 1), "yyyy-MM-dd");
+      return !taskInstances.some(
+        other =>
+          other.task_id === inst.task_id &&
+          other.scheduled_date === movedDate &&
+          other.week_number > weekNumber &&
+          other.status === "scheduled",
+      );
+    })
     .forEach(inst => {
       const task = tasks.find(t => t.id === inst.task_id);
       if (task) expiredItems.push({ task, instance: inst });

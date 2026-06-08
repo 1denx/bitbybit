@@ -39,7 +39,8 @@ export function ReviewView({ cycleId, weekNumber, weekStartDate }: ReviewViewPro
     );
 
     const relevantInstances = weekInstances.filter(
-      inst => inst.status === "completed" || inst.status === "scheduled",
+      inst =>
+        inst.status === "completed" || inst.status === "scheduled" || inst.status === "expired",
     );
 
     const totalCount = relevantInstances.length;
@@ -59,11 +60,14 @@ export function ReviewView({ cycleId, weekNumber, weekStartDate }: ReviewViewPro
     const coreCompletionRate =
       coreInstances.length > 0 ? Math.round((coreCompleted / coreInstances.length) * 100) : 0;
 
+    const expiredCount = relevantInstances.filter(inst => inst.status === "expired").length;
+
     return {
       totalCount,
       completedCount,
       pendingCount,
       coreCompletionRate,
+      expiredCount,
       // 細分數字
       totalCore: coreInstances.length,
       totalExtra: extraInstances.length,

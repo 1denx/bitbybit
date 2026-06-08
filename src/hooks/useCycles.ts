@@ -61,6 +61,13 @@ export function useCycles() {
   // 新增週期
   const createCycle = async (input: CreateCycleInput): Promise<boolean> => {
     if (!user) return false;
+
+    const hasNonCompleted = cycles.some(cycle => cycle.status !== "completed");
+    if (hasNonCompleted) {
+      toast.error("請先完成或刪除目前的週期");
+      return false;
+    }
+
     try {
       const endDate = calcEndDate(new Date(input.start_date));
 
