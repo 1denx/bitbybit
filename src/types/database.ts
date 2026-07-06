@@ -7,13 +7,6 @@ export type TaskPriority = "urgent_important" | "important" | "urgent" | "normal
 export type InstanceStatus = "unscheduled" | "scheduled" | "completed" | "expired";
 export type Frequency = "daily" | "1" | "2" | "3" | "4" | "5" | "6";
 
-export interface UserProfile {
-  id: string;
-  display_name: string;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface Cycle {
   id: string;
   user_id: string;
@@ -63,7 +56,6 @@ export interface TaskInstance {
   scheduled_end_time: string | null;
   status: InstanceStatus;
   completed_at: string | null;
-  is_expired_auto: boolean;
   created_at: string;
   updated_at: string;
 }

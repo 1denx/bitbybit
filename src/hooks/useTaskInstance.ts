@@ -276,7 +276,6 @@ export function useTaskInstances() {
           week_number: nextWeekNumber,
           scheduled_date: nextWeekDateStr,
           status: "scheduled",
-          is_expired_auto: false,
           completed_at: null,
         })
         .select()

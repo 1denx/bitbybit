@@ -67,7 +67,6 @@ function makeInstance(
     scheduled_end_time: null,
     status,
     completed_at: null,
-    is_expired_auto: false,
     created_at: NOW,
     updated_at: NOW,
   };
