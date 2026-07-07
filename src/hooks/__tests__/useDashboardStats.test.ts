@@ -43,7 +43,7 @@ function makeTask(id: string, category: "core" | "extra" = "core", goalId = "g1"
     scheduled_weeks: [1, 2, 3],
     frequency: "1",
     note: null,
-    create_at: NOW,
+    created_at: NOW,
     updated_at: NOW,
   };
 }

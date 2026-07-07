@@ -45,7 +45,7 @@ export function useTasks() {
 
         if (error) throw error;
 
-        const newTasks = data ?? ([] as Task[]);
+        const newTasks = data ?? [];
         const current = useTaskStore.getState().tasks;
         setTasks([...current.filter(existingTask => existingTask.goal_id !== goalId), ...newTasks]);
       } catch (error) {
@@ -69,7 +69,7 @@ export function useTasks() {
           .order("created_at", { ascending: true });
 
         if (error) throw error;
-        setTasks((data ?? []) as Task[]);
+        setTasks(data ?? []);
       } catch (error) {
         console.error("fetchTasksByCycle ERROR:", error);
       } finally {
@@ -99,7 +99,7 @@ export function useTasks() {
       const { data, error } = await supabase.from("tasks").insert(payload).select().single();
 
       if (error) throw error;
-      const newTask = data as Task;
+      const newTask = data;
       addTask(newTask);
       toast.success("任務已建立");
       return newTask;
@@ -121,7 +121,7 @@ export function useTasks() {
         .single();
 
       if (error) throw error;
-      updateTask(taskId, data as Task);
+      updateTask(taskId, data);
       toast.success("任務更新成功");
       return true;
     } catch (error) {
@@ -145,7 +145,7 @@ export function useTasks() {
         if (error) throw error;
 
         // 直接更新 store
-        updateTask(taskId, { priority } as Task);
+        updateTask(taskId, { priority });
       } catch (error) {
         console.error("updateTaskPriority ERROR:", error);
         toast.error("優先級更新失敗");
