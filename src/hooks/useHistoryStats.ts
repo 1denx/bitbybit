@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "../lib/supabase/client";
 import { useAuth } from "./useAuth";
-import type { Cycle, TaskInstance, Task } from "@/src/types";
-import { tr } from "date-fns/locale";
+import type { Cycle } from "@/src/types";
 
 export interface WeekRate {
   weekNumber: number;

@@ -37,7 +37,7 @@ export function useGoals() {
           .order("created_at", { ascending: true });
 
         if (error) throw error;
-        setGoals((data ?? []) as Goal[]);
+        setGoals(data ?? []);
       } catch (error) {
         console.error("fetchGoalsByCycle ERROR:", error);
       } finally {
@@ -67,7 +67,7 @@ export function useGoals() {
       const { data, error } = await supabase.from("goals").insert(payload).select().single();
 
       if (error) throw error;
-      const newGoal = data as Goal;
+      const newGoal = data;
       addGoal(newGoal);
       toast.success("目標已建立");
       return newGoal;
@@ -90,7 +90,7 @@ export function useGoals() {
 
       if (error) throw error;
 
-      updateGoal(goalId, data as Goal);
+      updateGoal(goalId, data);
       toast.success("目標已更新");
 
       return true;

@@ -94,9 +94,11 @@ export function ReviewForm({
         <div className="flex items-center justify-between mb-4">
           <div className="text-sm font-bold text-zinc-700">W{weekNumber} 本週回顧</div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-zinc-400">
-              {format(parseISO(review.updated_at), "M/d")} 填寫
-            </span>
+            {review.updated_at && (
+              <span className="text-xs text-zinc-400">
+                {format(parseISO(review.updated_at), "M/d")} 填寫
+              </span>
+            )}
             <span className="text-xs border border-emerald-200 bg-emerald-50 text-emerald-500 px-2 py-1 rounded-full font-medium hidden sm:block">
               已完成
             </span>

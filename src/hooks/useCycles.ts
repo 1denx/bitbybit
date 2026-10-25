@@ -3,7 +3,7 @@ import { createClient } from "../lib/supabase/client";
 import { useCycleStore } from "../store/cycleStore";
 import { useAuth } from "./useAuth";
 import { calcEndDate } from "../lib/utils/weekNumber";
-import type { Cycle, CycleStatus } from "../types";
+import type { CycleStatus, TablesUpdate } from "../types";
 import { toast } from "sonner";
 
 export interface CreateCycleInput {
@@ -99,7 +99,7 @@ export function useCycles() {
   // 編輯週期
   const editCycle = async (id: string, input: UpdateCycleInput): Promise<boolean> => {
     try {
-      const updates: Record<string, unknown> = { ...input };
+      const updates: TablesUpdate<"cycles"> = { ...input };
       if (input.start_date) {
         const endDate = calcEndDate(new Date(input.start_date));
         updates.end_date = endDate.toISOString().split("T")[0];

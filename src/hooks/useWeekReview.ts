@@ -2,20 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { createClient } from "../lib/supabase/client";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
+import type { WeeklyReview } from "../types";
 
-export interface WeekReview {
-  id: string;
-  cycle_id: string;
-  week_number: number;
-  content: string;
-  execution: string | null;
-  learning: string | null;
-  reflection: string | null;
-  mood: number | null;
-  created_at: string;
-  updated_at: string;
-}
-
+export type WeekReview = WeeklyReview;
 export interface SaveReviewInput {
   execution: string;
   learning: string;
@@ -78,7 +67,7 @@ export function useWeekReview(cycleId: string, weekNumber: number) {
           .single();
 
         if (error) throw error;
-        setReview(data as WeekReview);
+        setReview(data);
         toast.success("回顧已儲存");
         return true;
       } catch (error) {

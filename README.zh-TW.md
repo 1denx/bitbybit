@@ -25,9 +25,9 @@ BitByBit 是一套以 12 週為單位的目標追蹤系統，將模糊的的目�
 
 - **互動式週計畫**：基於 @dnd-kit 的拖曳排程，搭配 Pointer Events 實現精準落點定位。行動裝置採用點擊 + Offcanvas 操作，與桌機共用相同業務邏輯。
 
-- **數據分析與回顧**：即時 Dashboard 顯示完成率、任務總數與回顧連續天數。每週回顧於週日解鎖，支援補填過去週次；心情評分與反思欄位設計用於長期模式識別。
+- **數據分析與回顧**：即時 Dashboard 顯示完成率、任務總數與回顧次數。每週回顧於週日解鎖，支援補填過去週次；心情評分與反思欄位設計用於長期模式識別。
 
-- **智慧同步與提醒**：自動化任務通知保持執行一致性，搭配安全的 Google OAuth 整合。
+- **安全登入與資料隔離**：Supabase Auth 支援 Google OAuth 與 Email 登入。Session 由 Next.js middleware 於伺服器端驗證，所有資料表皆啟用 Row Level Security，確保使用者只能存取自己的資料。
 
 ## 技術棧
 
@@ -141,7 +141,7 @@ erDiagram
         string category
         string priority
         int[] scheduled_weeks
-        int frequency
+        string frequency
     }
     TaskInstance {
         uuid id PK
@@ -160,6 +160,8 @@ erDiagram
 | **Task**         | `category: core \| extra`、`priority`（四象限）、`scheduled_weeks: number[]`、`frequency` | 定義重複規則，不含具體日期              |
 | **TaskInstance** | `status: unscheduled → scheduled → completed \| expired`、`scheduled_date`、時間區間      | 由 Task 產生的具體排程單元              |
 
+輔助資料表：`profiles`（使用者顯示名稱）與 `week_reviews`（每週回顧）。完整 schema——包含將所有操作限制為 `auth.uid() = user_id` 的 Row Level Security policy——見 [`supabase/migrations/`](./supabase/migrations/)。
+
 ## 快速開始
 
 ```bash
@@ -173,6 +175,13 @@ npm install
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+接著將 `supabase/migrations/` 內的 SQL 檔依序套用到你的 Supabase 專案 - 可貼到 Supabase SQL Editor 執行，或使用 CLI：
+
+```bash
+npx supabase link --project-ref <your-project-ref>
+npx supabase db push
 ```
 
 ```bash

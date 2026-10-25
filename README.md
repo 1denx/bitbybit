@@ -25,9 +25,9 @@ Based on the "12-Week Year" methodology, it breaks down big goals into executabl
 
 - Interactive Weekly Planner: Drag-and-drop scheduling via @dnd-kit with Pointer Events for precise drop positioning. Mobile uses tap + Offcanvas with shared business logic across both experiences.
 
-- Analytics & Reflection: Real-time dashboard showing completion rate, total tasks, and review streaks. Weekly review unlocks on Sunday with back-fill support for past weeks; mood rating and reflection fields structured for pattern recognition.
+- Analytics & Reflection: Real-time dashboard showing completion rate, total tasks, and review count. Weekly review unlocks on Sunday with back-fill support for past weeks; mood rating and reflection fields structured for pattern recognition.
 
-- Smart Sync & Alerts: Stay consistent with automated task notifications and secure Google OAuth integration.
+- Secure Auth & Data Isolation: Google OAuth and email sign-in via Supabase Auth. Sessions are verified server-side in Next.js middleware, and every table enforces Row Level Security so each user can only access their own data.
 
 ## Tech Stack
 
@@ -141,7 +141,7 @@ erDiagram
         string category
         string priority
         int[] scheduled_weeks
-        int frequency
+        string frequency
     }
     TaskInstance {
         uuid id PK
@@ -160,6 +160,8 @@ erDiagram
 | **Task**         | `category: core \| extra`, `priority` (4-quadrant), `scheduled_weeks: number[]`, `frequency` | Defines recurrence rules; no concrete dates    |
 | **TaskInstance** | `status: unscheduled → scheduled → completed \| expired`, `scheduled_date`, time range       | Concrete scheduled unit generated from a Task  |
 
+Supporting tables: `profiles` (user display name) and `week_reviews` (weekly review entries). The full schema — including Row Level Security policies restricting every operation to `auth.uid() = user_id` — lives in [`supabase/migrations/`](./supabase/migrations/).
+
 ## Quick Start
 
 ```bash
@@ -173,6 +175,13 @@ Create a `.env.local` file in the project root:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Set up the database by applying the SQL files in `supabase/migrations/` to your Supabase project - either paste them into the Supabase SQL Editor in order, or use the CLI:
+
+```bash
+npx supabase link --project-ref <your-project-ref>
+npx supabase db push
 ```
 
 ```bash

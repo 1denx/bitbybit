@@ -3,8 +3,7 @@ import { createClient } from "../lib/supabase/client";
 import { useTaskStore } from "../store/taskStore";
 import { useAuth } from "./useAuth";
 import { format, subWeeks } from "date-fns";
-import type { TaskInstance, InstanceStatus } from "../types";
-import { ta, tr } from "date-fns/locale";
+import type { TaskInstance } from "../types";
 import { toast } from "sonner";
 
 export interface ScheduleInstanceInput {
@@ -31,7 +30,7 @@ export function useTaskInstances() {
           .eq("cycle_id", cycleId);
 
         if (error) throw error;
-        setTaskInstances((data ?? []) as TaskInstance[]);
+        setTaskInstances(data ?? []);
       } catch (error) {
         console.error("fetchAllInstancesByCycle ERROR:", error);
       }
@@ -52,7 +51,7 @@ export function useTaskInstances() {
           .eq("week_number", weekNumber);
 
         if (error) throw error;
-        setTaskInstances((data ?? []) as TaskInstance[]);
+        setTaskInstances(data ?? []);
       } catch (error) {
         console.error("fetchInstancesByWeek ERROR:", error);
       }
@@ -74,7 +73,7 @@ export function useTaskInstances() {
           .eq("scheduled_date", dateStr);
 
         if (error) throw error;
-        setTaskInstances((data ?? []) as TaskInstance[]);
+        setTaskInstances(data ?? []);
       } catch (error) {
         console.error("fetchInstancesByDate ERROR:", error);
       }
@@ -113,7 +112,7 @@ export function useTaskInstances() {
         .single();
 
       if (error) throw error;
-      const newInstance = data as TaskInstance;
+      const newInstance = data;
 
       addInstance(newInstance);
       return newInstance;
@@ -139,7 +138,7 @@ export function useTaskInstances() {
         .single();
 
       if (error) throw error;
-      updateInstance(input.instanceId, data as TaskInstance);
+      updateInstance(input.instanceId, data);
       return true;
     } catch (error) {
       console.error("rescheduleInstance ERROR:", error);
@@ -161,7 +160,7 @@ export function useTaskInstances() {
         .single();
 
       if (error) throw error;
-      updateInstance(instanceId, data as TaskInstance);
+      updateInstance(instanceId, data);
       return true;
     } catch (error) {
       console.error("completedInstance ERROR:", error);
@@ -183,7 +182,7 @@ export function useTaskInstances() {
         .single();
 
       if (error) throw error;
-      updateInstance(instanceId, data as TaskInstance);
+      updateInstance(instanceId, data);
       return true;
     } catch (error) {
       console.error("uncompleteInstance ERROR:", error);
@@ -276,7 +275,6 @@ export function useTaskInstances() {
           week_number: nextWeekNumber,
           scheduled_date: nextWeekDateStr,
           status: "scheduled",
-          is_expired_auto: false,
           completed_at: null,
         })
         .select()
@@ -285,7 +283,7 @@ export function useTaskInstances() {
       if (insertError) throw insertError;
 
       removeInstance(instanceId);
-      addInstance(newInstance as TaskInstance);
+      addInstance(newInstance);
 
       toast.success("已移到下週");
       return true;
